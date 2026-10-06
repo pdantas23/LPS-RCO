@@ -12,6 +12,18 @@ export const ALLOW_INDEXING = false;
 /** Faixa "Conteúdo de exemplo" no canto da tela. Desligar junto do conteúdo final. */
 export const SHOW_PLACEHOLDER_BADGE = true;
 
+// ---- Rotas do domínio único (lp.rcohub.com.br) ----
+// Cada rota tem UMA chave. Desligada = a rota existe (código pronto), mas responde 404
+// (sem conteúdo, sem formulário, sem GTM de evento, sem aceitar lead em /api/lead).
+// Para ligar: troque para true, rode os testes e publique. Mapa completo em content/lps.ts.
+
+/** /lp01 = P05 (Performance sem VSL). */
+export const LP01_ATIVA = true;
+/** /lp02 = P04 (Performance com VSL). Fora do ar por decisão do Philip (06/10): a rota está pronta, mas desligada. */
+export const LP02_ATIVA = false;
+/** /lp-ecom = LP de e-commerce, ainda não existe: rota reservada, sem conteúdo. */
+export const LP_ECOM_ATIVA = false;
+
 /** Container do Google Tag Manager. Vazio = GTM não é carregado. Constante (não env) de propósito: ver o topo do arquivo. */
 export const GTM_ID = "GTM-P9XNXV2B";
 

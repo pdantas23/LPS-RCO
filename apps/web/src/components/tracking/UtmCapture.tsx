@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { PAGES, PAGE_IDS } from "@/content/pages";
+import { isPageIdActive } from "@/content/lps";
 import { track } from "@/lib/tracking/events";
 import { captureTracking, readTracking } from "@/lib/tracking/utms";
 
@@ -22,6 +23,8 @@ export function UtmCapture() {
     lastTracked = pathname;
     captureTracking();
     const id = PAGE_IDS.find((p) => PAGES[p].path === pathname);
+    // LP desligada (404): não conta visita. Rota fora das LPs: "other".
+    if (id && !isPageIdActive(id)) return;
     track("page_view", { page_id: id ?? "other", page_path: pathname, ...readTracking() });
   }, [pathname]);
   return null;

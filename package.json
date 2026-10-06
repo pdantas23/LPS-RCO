@@ -2,7 +2,7 @@
   "name": "rco-landingpages",
   "version": "0.1.0",
   "private": true,
-  "description": "Landing pages da RCO Hub (P04 Performance com VSL, P05 Performance sem VSL). Leads seguem para o COMERCIAL-RCO por servidor.",
+  "description": "Landing pages da RCO Hub num domínio só (lp.rcohub.com.br): formulário (/), /lp01 (P05), /lp02 (P04, desligada), /lp-ecom (reservada). Leads seguem para o COMERCIAL-RCO.",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -11,12 +11,14 @@
     "node": ">=20.9"
   },
   "scripts": {
-    "dev": "npm run dev -w @rco/web",
-    "build": "npm run build -w @rco/web",
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "npm run dev -w @rco/web",
+    "build": "npm run build:form && npm run build -w @rco/web",
+    "build:form": "node scripts/build-form.mjs",
     "start": "npm run start -w @rco/web",
-    "lint": "npm run lint -w @rco/web",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "vitest run",
+    "lint": "npm run lint -w @rco/web && npm run lint --prefix formulario",
+    "typecheck": "npm run typecheck --workspaces --if-present && npm run typecheck --prefix formulario",
+    "test": "vitest run && npm test --prefix formulario",
     "test:watch": "vitest",
     "outbox": "node scripts/outbox.mjs"
   },

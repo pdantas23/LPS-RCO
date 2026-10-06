@@ -11,6 +11,7 @@ import {
   type OutboxItem,
   type RateLimiter,
 } from "@rco/lead-core/server";
+import { isPageIdActive } from "@/content/lps";
 import { pageMeta, type PageId } from "@/content/pages";
 import { leadSchema } from "./lead-schema";
 
@@ -44,6 +45,8 @@ export interface LeadServiceDeps {
   /** Roda depois da resposta (no Next: `after`). */
   schedule?: (task: () => Promise<unknown>) => void;
   log?: LogFn;
+  /** A LP atende? Padrão: as flags de content/site.ts (LP02_ATIVA etc.). Injetável para testar o fluxo sem depender delas. */
+  isPageActive?: (pageId: string) => boolean;
 }
 
 function json(status: number, body: unknown, headers: Record<string, string> = {}): Response {
@@ -110,6 +113,12 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
   const parsed = leadSchema.safeParse(data);
   if (!parsed.success) return json(422, { ok: false, errors: fieldErrors(parsed.error) });
   const lead = parsed.data;
+
+  // LP desligada (ex. LP02_ATIVA=false): não aceita lead dela, nem por chamada direta à API.
+  if (!(deps.isPageActive ?? isPageIdActive)(lead.page)) {
+    log("lead.page_inactive", { page: lead.page });
+    return json(404, { ok: false, error: "page_inactive" });
+  }
 
   const e164 = normalizeBrPhone(lead.whatsapp);
   if (!e164) return json(422, { ok: false, errors: { whatsapp: "Informe um WhatsApp válido." } });

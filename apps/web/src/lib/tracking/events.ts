@@ -1,4 +1,5 @@
 import type { Tracking } from "@rco/lead-core/tracking";
+import { lpOrigemOfPageId } from "@/content/lps";
 
 // ============================================================
 // dataLayer do GTM: UM helper (`track`) e UM catálogo de eventos (`EventMap`).
@@ -44,10 +45,16 @@ export interface EventMap {
 
 export type EventName = keyof EventMap;
 
+/**
+ * Empurra um evento. TODO evento leva `lp_origem` ("form" | "lp01" | "lp02" | "lp-ecom"), derivado do
+ * `page_id` em content/lps.ts: o mesmo evento personalizado vale em todas as LPs, e a origem diz de onde veio.
+ * Id fora do mapa (ex. "other") vai sem `lp_origem`.
+ */
 export function track<E extends EventName>(event: E, params: EventMap[E]): void {
   if (typeof window === "undefined") return;
   window.dataLayer = window.dataLayer ?? [];
-  window.dataLayer.push({ event, ...params });
+  const lp_origem = lpOrigemOfPageId(params.page_id);
+  window.dataLayer.push({ event, ...(lp_origem ? { lp_origem } : {}), ...params });
 }
 
 /** UUID v4. Cai para getRandomValues em navegador sem randomUUID (contexto não seguro). */

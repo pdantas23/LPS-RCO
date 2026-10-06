@@ -33,8 +33,17 @@ describe("track", () => {
   it("empurra { event, ...params } no dataLayer", () => {
     track("cta_click", { page_id: "P04", cta_location: "hero", cta_text: "Quero analisar minha operação" });
     expect(dataLayer).toEqual([
-      { event: "cta_click", page_id: "P04", cta_location: "hero", cta_text: "Quero analisar minha operação" },
+      { event: "cta_click", lp_origem: "lp02", page_id: "P04", cta_location: "hero", cta_text: "Quero analisar minha operação" },
     ]);
+  });
+
+  it("todo evento leva lp_origem conforme o page_id (P05 = lp01, P04 = lp02); id desconhecido vai sem", () => {
+    track("page_view", { page_id: "P05", page_path: "/lp01" });
+    track("form_start", { page_id: "P05" });
+    track("faq_open", { page_id: "P04", question: "q", question_index: 1 });
+    track("page_view", { page_id: "other", page_path: "/x" });
+    expect(dataLayer.map((e) => e.lp_origem)).toEqual(["lp01", "lp01", "lp02", undefined]);
+    expect("lp_origem" in dataLayer[3]!).toBe(false);
   });
 
   it("não quebra sem window (servidor)", () => {
@@ -50,6 +59,7 @@ describe("generate_lead", () => {
     expect(dataLayer).toEqual([
       {
         event: "generate_lead",
+        lp_origem: "lp02",
         page_id: "P04",
         nicho: "Odontologia",
         faturamento: "De R$ 30 mil a R$ 100 mil por mês",
@@ -80,7 +90,7 @@ describe("generate_lead", () => {
       expect(dataLayer.every((e) => !(key in e))).toBe(true);
     }
     // lista fechada de chaves do evento
-    expect(Object.keys(dataLayer[0]!).sort()).toEqual(["event", "event_id", "faturamento", "nicho", "page_id"]);
+    expect(Object.keys(dataLayer[0]!).sort()).toEqual(["event", "event_id", "faturamento", "lp_origem", "nicho", "page_id"]);
   });
 });
 

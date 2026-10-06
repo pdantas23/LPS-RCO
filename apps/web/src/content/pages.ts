@@ -179,7 +179,7 @@ const steps = {
 export const PAGES: Record<PageId, PageConfig> = {
   P04: {
     id: "P04",
-    path: "/p04",
+    path: "/lp02",
     formId: "lp-p04",
     formName: "LP P04 · Performance com VSL",
     title: "CRM com tráfego pago e atendimento automatizado no WhatsApp | RCO Hub",
@@ -235,7 +235,7 @@ export const PAGES: Record<PageId, PageConfig> = {
   },
   P05: {
     id: "P05",
-    path: "/p05",
+    path: "/lp01",
     formId: "lp-p05",
     formName: "LP P05 · Performance sem VSL",
     title: "CRM com performance em tráfego pago e WhatsApp | RCO Hub",

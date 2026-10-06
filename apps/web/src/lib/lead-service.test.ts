@@ -32,6 +32,8 @@ function deps(over: Partial<LeadServiceDeps> = {}): LeadServiceDeps {
     now: () => T0,
     schedule: (t) => void scheduled.push(t),
     log: () => {},
+    // Os testes do fluxo valem para qualquer página; a trava das flags tem o bloco próprio no fim do arquivo.
+    isPageActive: () => true,
     ...over,
   };
 }
@@ -235,5 +237,27 @@ describe("POST /api/lead — o que NUNCA sai", () => {
     expect(raw).not.toMatch(/token/i);
     const item = JSON.parse(raw) as OutboxItem;
     expect(item.status).toBe("pending");
+  });
+});
+
+describe("POST /api/lead — LP desligada não recebe lead (flags de content/site.ts)", () => {
+  const real = { isPageActive: undefined };
+
+  it("P04 (/lp02, desligada): 404, nada gravado e nada enviado ao COMERCIAL", async () => {
+    const send = vi.fn(async () => ok);
+    const b = body({ page: "P04" });
+    const res = await handleLeadRequest(post(b), deps({ ...real, send }));
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ ok: false, error: "page_inactive" });
+    expect(outbox.get(b.respondentId as string)).toBeNull();
+    expect(scheduled).toHaveLength(0);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("P05 (/lp01, ligada): segue o fluxo normal", async () => {
+    const b = body({ page: "P05" });
+    const res = await handleLeadRequest(post(b), deps(real));
+    expect(res.status).toBe(200);
+    expect(outbox.get(b.respondentId as string)?.page).toBe("P05");
   });
 });
