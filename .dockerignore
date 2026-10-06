@@ -7,5 +7,4 @@
 !**/.env.example
 .git
 docs/screens
-lp-crm
 apps/web/public/_form

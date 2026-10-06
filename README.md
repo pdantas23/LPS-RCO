@@ -9,7 +9,7 @@ Monorepo das landing pages da RCO Hub, servidas num **domínio único** por **um
 | `/lp02` | P04, Performance com VSL (`apps/web`) | **desligada** (404), rota pronta | origem **p04** (token `P04`) |
 | `/lp-ecom` | LP de e-commerce | **reservada**, sem conteúdo, desligada (404) | ainda não existe |
 
-Fora do domínio: `lp-crm/` (P01 "CRM", Vite, do Aerton). Não entra na imagem nem no `npm run build`.
+A P01 (LP de venda do CRM RCO, do Aerton) saiu deste repositório em 06/10/2026: ela fica em outra rota/projeto, fora de lp.rcohub.com.br.
 
 > Estado: publicação (DNS, EasyPanel, HTTPS) ainda NÃO feita. Veja `docs/fluxo-e-operacao.md`.
 
@@ -24,7 +24,6 @@ apps/web/                 Next 16 (App Router, Tailwind 4). Serve /lp01, /lp02, 
   src/content/pages.ts      TEXTO das páginas P04/P05 (tudo de exemplo)
   src/lib/tracking/         dataLayer (catálogo único; docs/gtm-eventos.md)
 formulario/               Vite (P02). Build com base /_form/ vai para apps/web/public/_form
-lp-crm/                   Vite (P01). FORA do domínio e da imagem
 packages/lead-core/       lógica sem Next: telefone, validação, payload do COMERCIAL, fila em arquivos
 scripts/dev.mjs           um comando para ver tudo junto
 scripts/build-form.mjs    build do formulário + cópia para apps/web/public/_form

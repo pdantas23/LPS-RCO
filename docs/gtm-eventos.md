@@ -9,7 +9,7 @@ Domínio único **lp.rcohub.com.br**, um container GTM para todas as páginas e 
 | `/lp02` | `lp02` | `P04` | `apps/web` (Next) | **desligada** (`LP02_ATIVA=false`), 404 |
 | `/lp-ecom` | `lp-ecom` | `ECOM` (provisório) | reservada, sem conteúdo | **desligada** (`LP_ECOM_ATIVA=false`), 404 |
 
-Mapa no código: `apps/web/src/content/lps.ts` (Next) e `formulario/src/lib/tracking.ts` (formulário). A P01 (`lp-crm/`) NÃO faz parte deste domínio.
+Mapa no código: `apps/web/src/content/lps.ts` (Next) e `formulario/src/lib/tracking.ts` (formulário). A P01 (LP de venda do CRM) não faz parte deste repositório.
 
 Container: **GTM-P9XNXV2B** em todas (constante `GTM_ID` em `apps/web/src/content/site.ts` e `formulario/src/gtm.ts`; não é variável de ambiente).
 Next: snippet no layout raiz (`components/tracking/Analytics.tsx`, `next/script` `beforeInteractive`) + `<noscript>` no início do `<body>`. Formulário: injetado no HTML em build pelo `vite.config.ts` (`src/gtm.ts`).
