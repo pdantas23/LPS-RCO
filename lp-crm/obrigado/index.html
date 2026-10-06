@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="robots" content="noindex" />
+    <title>CRM RCO | Status do pagamento</title>
+    <link rel="icon" type="image/webp" href="../favicon.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  </head>
+  <body class="status-page">
+    <main class="status-card" aria-live="polite">
+      <img src="../rco-simbolo.webp" alt="RCO" width="40" height="38" />
+      <!-- Estados: só um visível por vez. "Aprovado" depende do servidor, nunca desta URL. -->
+      <section data-state="checking">
+        <h1>Confirmando seu pagamento…</h1>
+        <p>Estamos consultando o status junto ao provedor de pagamento.</p>
+      </section>
+      <section data-state="approved" hidden>
+        <h1>Pagamento confirmado</h1>
+        <!-- PENDING_BUSINESS_CONFIGURATION: texto da liberação de acesso conforme a regra real da RCO. -->
+        <p>Recebemos a confirmação do pagamento. A liberação do acesso segue o processo da RCO.</p>
+      </section>
+      <section data-state="pending" hidden>
+        <h1>Pagamento ainda não confirmado</h1>
+        <p>O provedor ainda não confirmou o pagamento. O acesso só é liberado depois da confirmação.</p>
+        <button type="button" class="btn btn--primary" data-recheck>Verificar novamente</button>
+      </section>
+      <section data-state="refused" hidden>
+        <h1>Pagamento não aprovado</h1>
+        <p>O provedor recusou o pagamento. Você pode tentar novamente escolhendo o plano outra vez.</p>
+        <a class="btn btn--primary" href="../#planos">Tentar novamente</a>
+      </section>
+      <section data-state="unknown" hidden>
+        <h1>Não conseguimos confirmar agora</h1>
+        <p>Não foi possível consultar o status do pagamento. Isso não significa que ele foi aprovado ou recusado.</p>
+        <button type="button" class="btn btn--primary" data-recheck>Verificar novamente</button>
+      </section>
+    </main>
+    <script type="module" src="/src/obrigado.ts"></script>
+  </body>
+</html>
