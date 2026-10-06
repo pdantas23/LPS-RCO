@@ -13,7 +13,7 @@ const BODY = HTML.slice(HTML.indexOf("<body>") + 6, HTML.indexOf("</body>"));
 const ENTRY = "https://lp.rcohub.com/formulario/?utm_source=instagram&utm_medium=bio&utm_campaign=performance&utm_content=story&utm_term=crm&gclid=G1&fbclid=ABC&foo=bar";
 const DRAFT_KEY = "rco_p02_rascunho_v3";
 /** Tudo que a pessoa responde: nada disso pode aparecer no dataLayer. */
-const PII = ["Maria", "Silva", "99876", "5562998765432", "maria@", "empresa.com", "@empresa", "João", "saude", "Saúde", "10k_30k", "R$", "nao_converte", "imediato", "nunca", "2_3"];
+const PII = ["Maria", "Silva", "99876", "5562998765432", "maria@", "empresa.com", "@empresa", "João", "Saúde", "R$", "nao_converte", "imediato", "nunca", "2_3"];
 
 type Sender = ReturnType<typeof vi.fn<(p: LeadPayload) => Promise<SendResult>>>;
 
@@ -289,7 +289,16 @@ describe("P02 — envio", () => {
     expect($("#success").hidden).toBe(false);
     expect($("#lead-form").hidden).toBe(true);
     expect(document.activeElement).toBe($("#success-title"));
-    expect(named("generate_lead")).toEqual([{ event: "generate_lead", page_type: "performance_form", form_name: "performance" }]);
+    expect(named("generate_lead")).toHaveLength(1);
+    expect(named("generate_lead")[0]).toMatchObject({
+      event: "generate_lead",
+      lp_origem: "form",
+      page_id: "P02",
+      page_type: "performance_form",
+      form_name: "performance",
+    });
+    // event_id = submission_id (deduplicação com a Conversions API); nicho/faturamento só como código de categoria.
+    expect(named("generate_lead")[0].event_id).toEqual(expect.stringMatching(/^[0-9a-f-]{36}$/));
     expect(sessionStorage.getItem(DRAFT_KEY)).toBeNull();
   });
 
@@ -352,7 +361,7 @@ describe("P02 — envio", () => {
     expect($("#submit-error").getAttribute("role")).toBe("alert");
     expect($("#submit-button").textContent).toBe("Tentar novamente");
     expect(named("generate_lead")).toHaveLength(0);
-    expect(named("form_error").at(-1)?.error_type).toBe("submit_timeout");
+    expect(named("form_error").at(-1)).toMatchObject({ error_type: "network", error_detail: "submit_timeout" });
     expect(visibleStep()).toBe(LAST);
     expect($<HTMLInputElement>("#full_name").value).toBe("  Maria   da Silva ");
 
@@ -464,16 +473,21 @@ describe("P02 — tracking", () => {
     const steps = named("form_step");
     expect(steps.map((e) => e.step_name)).toEqual(SCREENS.map((s) => s.id));
     expect(steps.map((e) => e.step)).toEqual(Array.from({ length: 12 }, (_, i) => i + 1));
-    expect(events().map((e) => e.event).filter((e) => e !== "form_step")).toEqual(["page_view", "form_start", "generate_lead"]);
+    expect(events().map((e) => e.event).filter((e) => e !== "form_step")).toEqual(["page_view", "form_start", "form_submit", "generate_lead"]);
     const dump = JSON.stringify(events());
     for (const pii of PII) expect(dump, pii).not.toContain(pii);
+    // Só as CATEGORIAS (nicho/faturamento) podem sair, e só no generate_lead (catálogo único das LPs).
+    expect(named("generate_lead")[0]).toMatchObject({ nicho: "saude", faturamento: "10k_30k" });
+    for (const e of events().filter((e) => e.event !== "generate_lead")) {
+      expect(JSON.stringify(e)).not.toMatch(/saude|10k_30k/);
+    }
   });
 
   it("tentar avançar vazio também é interação: form_start vem antes do form_error", () => {
     setup(saved());
     submitStep();
     expect(events().map((e) => e.event)).toEqual(["page_view", "form_start", "form_error"]);
-    expect(named("form_error")[0].error_type).toBe("missing_name");
+    expect(named("form_error")[0]).toMatchObject({ error_type: "validation", error_detail: "missing_name" });
   });
 
   it("form_start só com interação real (não no carregamento)", () => {
@@ -495,7 +509,7 @@ describe("P02 — nome de curioso", () => {
     expect(visibleStep()).toBe(0);
     expect(send).not.toHaveBeenCalled();
     expect(sessionStorage.getItem(DRAFT_KEY)).toBeNull();
-    expect(named("form_error").at(-1)?.error_type).toBe("suspect_name");
+    expect(named("form_error").at(-1)).toMatchObject({ error_type: "validation", error_detail: "suspect_name" });
     expect(JSON.stringify(events())).not.toContain(nome);
     expect(named("form_step")).toHaveLength(0);
   });
@@ -585,6 +599,6 @@ describe("P02 — contato parcial (quem para no meio)", () => {
     await flush();
     window.dispatchEvent(new Event("pagehide"));
     expect(partials).toHaveLength(count);
-    expect(events().slice(before).map((e) => e.event)).toEqual(["form_step", "generate_lead"]);
+    expect(events().slice(before).map((e) => e.event)).toEqual(["form_submit", "form_step", "generate_lead"]);
   });
 });

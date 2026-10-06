@@ -17,13 +17,14 @@ function sessionStore(): Storage | null {
 const storage = sessionStore();
 
 const tracker = createTracker(window, storage);
-tracker.pageView();
+const attribution = captureAttribution(window.location.href, document.referrer, storage);
+tracker.pageView(attribution, window.location.pathname);
 
 mountForm({
   doc: document,
   storage,
   tracker,
-  attribution: captureAttribution(window.location.href, document.referrer, storage),
+  attribution,
   draft: loadDraft(storage),
   send: (payload) => sendLead(payload, api),
   savePartial: (payload) => savePartial(payload, api),

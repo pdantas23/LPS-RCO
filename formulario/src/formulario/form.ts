@@ -435,6 +435,7 @@ export function mountForm(deps: FormDeps) {
     }
     if (blockCurious()) return;
 
+    tracker.formSubmit();
     tracker.formStep(LAST + 1, SCREENS[LAST].id, draft.submissionId);
     submitError.hidden = true;
     setStatus("submitting");
@@ -466,7 +467,7 @@ export function mountForm(deps: FormDeps) {
 
     if (result.kind === "saved") {
       // Único ponto do código que dispara generate_lead: servidor confirmou o salvamento.
-      tracker.generateLead(submissionId);
+      tracker.generateLead(submissionId, { niche: answers.niche, revenue: answers.revenue_range });
       clearDraft(storage);
       setStatus("success");
       form.hidden = true;

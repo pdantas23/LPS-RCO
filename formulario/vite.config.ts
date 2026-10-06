@@ -72,6 +72,10 @@ function gtm(): Plugin {
 }
 
 export default defineConfig({
+  // Standalone (nginx do Dockerfile do Aerton): "/". Servido pelo app Next das LPs (raiz do monorepo): FORM_BASE=/_form/.
+  base: process.env.FORM_BASE ?? "/",
+  // HMR direto na porta do Vite quando o formulário roda atrás do Next (npm run dev da raiz).
+  server: process.env.FORM_BASE ? { hmr: { clientPort: Number(process.env.FORM_DEV_PORT ?? 5174) } } : {},
   plugins: [devLeadApi(), gtm()],
   build: {
     target: "es2019",
