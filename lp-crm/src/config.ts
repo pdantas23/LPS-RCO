@@ -15,7 +15,7 @@ export const PENDING = "PENDING_BUSINESS_CONFIGURATION" as const;
 export const SITE_URL = "https://crm.rcohub.com/lpcrm/";
 
 /** PENDING_BUSINESS_CONFIGURATION: ID do container GTM. Vazio = GTM não carrega (o dataLayer continua). */
-export const GTM_ID = "";
+export const GTM_ID = "GTM-P9XNXV2B";
 
 export const links = {
   /**
@@ -139,7 +139,7 @@ export const deepDives: DeepDive[] = [
       "Painéis por atendente e por setor",
     ],
     art: "inbox",
-    shot: null,
+    shot: { src: "./telas/conversas.webp", alt: "Conversa de WhatsApp no CRM, do orçamento ao pagamento confirmado", width: 1233, height: 1688 },
   },
   {
     // Funis kanban e broadcasts (base wacrm), CV1 ✅, CV2 ✅, EN2 🟢.
@@ -154,7 +154,7 @@ export const deepDives: DeepDive[] = [
       "Disparos com modelos de mensagem aprovados pela Meta",
     ],
     art: "funnel",
-    shot: null,
+    shot: { src: "./telas/funil.webp", alt: "Funil de vendas em kanban com negócios nas etapas Novo Lead, Tentando Contato e Follow Up 01", width: 1578, height: 1310 },
   },
   {
     // RA1 ✅, RA2 ✅, RA3 ✅, CV4 🟢, CV5 🟢, CV6 🟢 (gasto informado manualmente).
@@ -169,7 +169,7 @@ export const deepDives: DeepDive[] = [
       "Custo por lead e ROAS a partir do gasto informado",
     ],
     art: "origin",
-    shot: null,
+    shot: { src: "./telas/metricas.webp", alt: "Métricas comerciais com receita, gasto, ROAS e custo por lead de cada campanha", width: 1550, height: 1242 },
   },
   {
     // Automações e fluxos (base wacrm), IA2 🟢, CV3 ✅, IA1 ✅, CV7 ✅, API pública.
@@ -234,3 +234,76 @@ export const heroShot: Shot | null = null;
 
 /** PENDING_BUSINESS_CONFIGURATION: depoimentos AUTORIZADOS. Vazio = seção oculta (nada inventado). */
 export const testimonials: { quote: string; author: string; company: string }[] = [];
+
+export interface TourScreen {
+  id: string;
+  /** Rótulo curto da aba. */
+  tab: string;
+  title: string;
+  text: string;
+  points: string[];
+  /** Tela do CRM (dados fictícios: empresa, equipe e clientes inventados). */
+  shot: Shot;
+}
+
+const screen = (id: string, alt: string): Shot => ({ src: `./telas/sistema-${id}.webp`, alt, width: 1920, height: 1200 });
+
+/** Telas do CRM numa seção com abas. Só recursos que aparecem na própria tela. */
+export const tour: TourScreen[] = [
+  {
+    id: "desempenho",
+    tab: "Desempenho",
+    title: "Os números do período num painel só",
+    text: "Conversas iniciadas, novos contatos e receita no período que você escolher, junto com os tempos de atendimento.",
+    points: ["Receita e conversas do período", "Tempo de espera e de primeira resposta", "Tempo do lead até a venda", "Gráfico diário de mensagens recebidas e enviadas"],
+    shot: screen("desempenho", "Painel de desempenho do CRM com conversas, contatos, receita e tempos de atendimento"),
+  },
+  {
+    id: "conversas",
+    tab: "Conversas",
+    title: "Do primeiro oi ao pagamento",
+    text: "A caixa de entrada reúne os atendimentos do número da empresa. O atendente conversa com o histórico completo e vê a etapa do cliente no funil ao lado.",
+    points: ["Lista de conversas com mensagens não lidas em destaque", "Anexos, áudios e respostas rápidas digitando /", "Funil e etapa do cliente ao lado da conversa", "Transferência do atendimento para outra pessoa"],
+    shot: screen("conversas", "Caixa de entrada do CRM com uma conversa de venda pelo WhatsApp aberta"),
+  },
+  {
+    id: "funil",
+    tab: "Funil",
+    title: "Cada negócio na etapa certa",
+    text: "O funil em kanban mostra quantos negócios há em cada etapa e há quanto tempo cada um está parado.",
+    points: ["Etapas do jeito da sua empresa", "Tempo de cada negócio na etapa", "Busca, filtros e etiquetas", "Novo lead com um clique"],
+    shot: screen("funil", "Funil de vendas em kanban com as etapas Novo Lead, Tentando Contato e Follow Up"),
+  },
+  {
+    id: "lead",
+    tab: "Ficha do lead",
+    title: "Tudo sobre o cliente numa ficha só",
+    text: "Responsável, etapa, valor do negócio e contato ficam juntos, com a régua de follow-up e a linha do tempo do lead.",
+    points: ["Responsável, etapa e valor do negócio", "Régua de follow-up por ligação e mensagem", "Etiquetas e notas", "Linha do tempo com cada mensagem e mudança de etapa"],
+    shot: screen("lead", "Ficha do lead com informações do negócio, follow-up, etiquetas e linha do tempo"),
+  },
+  {
+    id: "clientes",
+    tab: "Clientes",
+    title: "A base de clientes organizada",
+    text: "Todos os contatos que chegaram pelo WhatsApp ficam numa lista, com telefone, e-mail e data de entrada.",
+    points: ["Busca por nome, telefone ou e-mail", "Filtro por funil e filtros por etiqueta", "Importação de contatos", "Cadastro manual de clientes"],
+    shot: screen("clientes", "Lista de clientes do CRM com nome, telefone, e-mail e data de criação"),
+  },
+  {
+    id: "metas",
+    tab: "Metas",
+    title: "Ranking e metas do time",
+    text: "O gestor acompanha leads, vendas, perdas e receita de cada vendedor nos últimos 30 dias.",
+    points: ["Ranking de vendedores", "Meta mensal por vendedor", "Motivos de perda mais comuns"],
+    shot: screen("metas", "Ranking de vendedores com metas do mês e motivos de perda"),
+  },
+  {
+    id: "metricas",
+    tab: "Métricas",
+    title: "Quanto cada anúncio rendeu",
+    text: "Leads, vendas e receita de cada campanha, com custo por lead e ROAS a partir do gasto informado.",
+    points: ["Receita, gasto e ROAS do período", "Custo por lead de cada campanha", "Lançamento do gasto de anúncio por campanha"],
+    shot: screen("metricas", "Métricas comerciais com receita, gasto, ROAS e custo por lead por campanha"),
+  },
+];
