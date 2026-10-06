@@ -9,3 +9,9 @@ out
 .DS_Store
 coverage
 docs/screens/
+
+apps/web/public/_form
+formulario/dist
+formulario/node_modules
+lp-crm/node_modules
+lp-crm/dist

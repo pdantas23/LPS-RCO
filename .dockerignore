@@ -1,0 +1,11 @@
+**/node_modules
+**/.next
+**/dist
+**/.data
+**/.env
+**/.env.*
+!**/.env.example
+.git
+docs/screens
+lp-crm
+apps/web/public/_form
