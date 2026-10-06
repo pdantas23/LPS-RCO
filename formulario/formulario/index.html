@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light" />
+    <!-- Página de captação: não indexar. -->
+    <meta name="robots" content="noindex" />
+    <title>RCO | Conversar sobre minha empresa</title>
+    <meta name="description" content="Formulário de contato da RCO para o serviço de Performance." />
+    <link rel="canonical" href="https://lp.rcohub.com.br/formulario/" />
+    <link rel="icon" type="image/webp" href="../favicon.webp" />
+    <!-- Bowlby One (título do painel) + Inter (formulário). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Inter:wght@400;500;600;700&display=swap" />
+    <!-- app:gtm -->
+  </head>
+  <body>
+    <!-- app:gtm-noscript -->
+    <!-- PENDENTE: copy oficial de todo o texto desta página. -->
+    <main class="split">
+      <!-- Painel da marca: visível no desktop; no celular fica só para leitores de tela (o formulário vem primeiro). -->
+      <aside class="panel" aria-labelledby="panel-title">
+        <div class="panel__inner">
+          <!-- PENDENTE: logo completo (símbolo + nome) quando a RCO enviar o arquivo. -->
+          <span class="panel__logo"><img src="../rco-simbolo.webp" alt="RCO" width="34" height="33" /></span>
+          <h1 id="panel-title" class="panel__title">Vamos conhecer sua empresa</h1>
+          <p class="panel__lead">Com essas informações, o time comercial da RCO prepara a conversa com você.</p>
+          <p class="panel__fine">Uma pergunta por vez.</p>
+        </div>
+      </aside>
+
+      <div class="side">
+        <header class="side__top">
+          <img class="side__logo" src="../rco-simbolo.webp" alt="RCO" width="36" height="34" />
+        </header>
+
+        <div class="side__body">
+          <!-- action/method: se a pessoa apertar Enter antes do JS carregar (ou sem JS), o navegador
+               não navega nem põe nome e WhatsApp na URL. O envio de verdade é o do JS. -->
+          <form id="lead-form" class="flow" novalidate action="javascript:void(0)" method="post">
+            <div class="progress">
+              <!-- Só para leitor de tela: na tela fica apenas a barra. -->
+              <p id="progress-text" class="sr-only"></p>
+              <div class="progress__bar" aria-hidden="true"><span id="progress-fill"></span></div>
+            </div>
+
+            <!-- Armadilha anti-spam: invisível para pessoas, fora do Tab e dos leitores de tela. -->
+            <div class="hp" aria-hidden="true">
+              <label for="website">Não preencha este campo</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <!-- Uma pergunta por tela, montadas a partir de src/formulario/config.ts (SCREENS). A última envia. -->
+            <div id="screens"></div>
+
+          </form>
+
+          <section id="success" class="success" aria-labelledby="success-title" hidden>
+            <span class="success__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h2 id="success-title" tabindex="-1">Recebemos seus dados</h2>
+            <p>Obrigado. O time comercial da RCO vai falar com você pelo WhatsApp informado.</p>
+          </section>
+
+          <!-- Cartão de apoio (no lugar do depoimento da referência: nada de prova inventada). -->
+          <ul class="about" aria-label="Sobre este formulário">
+            <li class="about__item">
+              <strong>Por que pedimos esses dados</strong>
+              <span>Para entender o momento da sua empresa antes de conversar com você.</span>
+            </li>
+            <li class="about__item">
+              <strong>Depois do envio</strong>
+              <span>O time comercial da RCO fala com você pelo WhatsApp que você informar.</span>
+            </li>
+          </ul>
+
+          <noscript><p class="alert">Para enviar o formulário, ative o JavaScript do navegador.</p></noscript>
+        </div>
+
+        <footer class="side__foot">© RCO</footer>
+      </div>
+    </main>
+    <script type="module" src="/src/formulario/main.ts"></script>
+  </body>
+</html>

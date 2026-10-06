@@ -1,0 +1,9 @@
+node_modules
+dist
+
+# Segredos e chaves: nenhum .env entra no Git,
+# exceto o exemplo (vazio) e o de desenvolvimento (só aponta para a API local, sem chave real).
+.env
+.env.*
+!.env.example
+!.env.development
