@@ -10,7 +10,7 @@
 export const ALLOW_INDEXING = false;
 
 /** Faixa "Conteúdo de exemplo" no canto da tela. Desligar junto do conteúdo final. */
-export const SHOW_PLACEHOLDER_BADGE = true;
+export const SHOW_PLACEHOLDER_BADGE = false;
 
 // ---- Rotas do domínio único (lp.rcohub.com.br) ----
 // Cada rota tem UMA chave. Desligada = a rota existe (código pronto), mas responde 404

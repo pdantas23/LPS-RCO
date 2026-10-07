@@ -48,6 +48,14 @@ const nextConfig: NextConfig = {
   // escritório do usuário, IP pode mudar se o roteador reatribuir — se
   // parar de funcionar de novo, é só o IP ter mudado, atualiza aqui.
   allowedDevOrigins: ["192.168.1.20"],
+  // Link antigo do formulário (serviço rco-lp, até 07/10/2026) apontava para /formulario/.
+  async redirects() {
+    return [
+      { source: "/formulario", destination: "/", permanent: true },
+      { source: "/formulario/curioso", destination: "/curioso", permanent: true },
+      { source: "/formulario/:path*", destination: "/", permanent: true },
+    ];
+  },
   async rewrites() {
     return { beforeFiles: formRewrites, afterFiles: [], fallback: [] };
   },
