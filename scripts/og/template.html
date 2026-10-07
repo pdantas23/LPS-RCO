@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Poppins:wght@500;800&display=swap">
+<style>
+*{margin:0;box-sizing:border-box}
+body{width:1200px;height:630px;background:#101d41;color:#f4f6fb;font-family:Poppins,sans-serif;position:relative;overflow:hidden}
+.glow{position:absolute;right:-180px;top:-200px;width:760px;height:760px;border-radius:50%;background:radial-gradient(circle,#0d67f0 0%,rgba(13,103,240,0) 68%);opacity:.55}
+.bar{position:absolute;left:0;top:0;bottom:0;width:14px;background:#0d67f0}
+.wrap{position:absolute;left:84px;right:84px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;gap:28px;padding-bottom:50px}
+img{width:96px;height:auto}
+.eyebrow{font-weight:500;font-size:28px;color:#9aa6c3;letter-spacing:.02em}
+h1{text-wrap:balance;font-size:var(--fs);line-height:1.12;font-weight:800;max-width:1000px;font-family:var(--ff)}
+.sub{font-size:30px;font-weight:500;color:#9aa6c3;max-width:900px;line-height:1.35}
+.foot{position:absolute;left:84px;bottom:36px;font-size:26px;font-weight:500;color:#9aa6c3}
+</style></head><body><div class="bar"></div><div class="glow"></div>
+<div class="wrap"><img src="../../apps/web/public/rco-logo-white.png">
+<div class="eyebrow" id="e"></div><h1 id="t"></h1><div class="sub" id="s"></div></div>
+<div class="foot">lp.rcohub.com.br</div>
+<script>
+const q=new URLSearchParams(location.search);
+const d={
+form:{e:"",t:"Vamos conhecer sua empresa",s:"Com essas informações, o time comercial da RCO prepara a conversa com você.",fs:"78px",ff:"'Bowlby One',sans-serif"},
+lp:{e:"Performance para o seu negócio",t:"Pare de perder vendas no WhatsApp por falta de organização. Conheça o CRM RCO",s:"",fs:"56px",ff:"Poppins,sans-serif"}
+}[q.get("v")];
+e.textContent=d.e;t.textContent=d.t;s.textContent=d.s;
+document.documentElement.style.setProperty("--fs",d.fs);document.documentElement.style.setProperty("--ff",d.ff);
+</script></body></html>

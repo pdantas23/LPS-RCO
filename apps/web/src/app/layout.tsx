@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics, GtmNoScript } from "@/components/tracking/Analytics";
 import { UtmCapture } from "@/components/tracking/UtmCapture";
 import { ALLOW_INDEXING } from "@/content/site";
+import { SITE_URL } from "@/lib/share";
 
 // Poppins como fonte padrão das duas páginas (P04 e P05): next/font baixa e
 // hospeda o arquivo no próprio build (sem request pro Google em runtime) e
@@ -17,6 +18,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "RCO Hub",
   robots: ALLOW_INDEXING ? { index: true, follow: true } : { index: false, follow: false },
 };
