@@ -33,6 +33,7 @@ export const ECOM_HERO = {
 export const ECOM_PAINS = {
   heading: "Isso acontece na sua loja?",
   description: "Cinco situações comuns em loja online que investe em anúncio.",
+  closing: "Se você se reconheceu em pelo menos uma dessas situações, vale conversar com o nosso time.",
   cta: "Quero resolver isso",
   items: [
     { id: "anuncio", image: "/ecom/dor-anuncio.webp", title: "Gasta em anúncio e não sabe o que voltou", text: "O dinheiro sai todo mês, mas ninguém mostra quanto de venda veio de cada real investido." },
@@ -88,6 +89,12 @@ export const PROOF_PLACEHOLDERS = [
   { id: "equipe", kind: "equipe", label: "[Foto e nome de quem atende a sua conta]" },
   { id: "logos", kind: "logos", label: "[Logos de lojas atendidas, com autorização]" },
 ] as const;
+
+/** Os mesmos 6 espaços reservados, no formato do carrossel de depoimentos (TestimonialsMarquee). Trocar por material real e autorizado. */
+export const PROOF_TESTIMONIAL_PLACEHOLDERS = PROOF_PLACEHOLDERS.map((p) => ({
+  name: { resultado: "Resultado de cliente", depoimento: "Depoimento de lojista", equipe: "Equipe RCO", logos: "Lojas atendidas" }[p.kind],
+  quote: p.label,
+}));
 
 export const ECOM_FAQ = [
   {

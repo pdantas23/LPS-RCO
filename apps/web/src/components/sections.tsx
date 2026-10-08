@@ -1,4 +1,4 @@
-import { CircleDot, ClipboardList, Rocket } from "lucide-react";
+import { CircleDot, ClipboardList, Rocket, type LucideIcon } from "lucide-react";
 import type { PageConfig } from "@/content/pages";
 import { HeroCta } from "./HeroCta";
 import { IncludedFlow } from "./IncludedFlow";
@@ -14,8 +14,8 @@ const WHATSAPP_ICON = BRAND_ICONS.find((icon) => icon.slug === "whatsapp")!;
  *  aqui, cai num genérico em vez de quebrar. */
 const STEP_ICONS = [ClipboardList, null, Rocket] as const;
 
-function StepIcon({ index }: { index: number }) {
-  const Icon = STEP_ICONS[index];
+function StepIcon({ index, icons = STEP_ICONS }: { index: number; icons?: readonly (LucideIcon | null)[] }) {
+  const Icon = icons[index];
   if (Icon === null) return <BrandIcon icon={WHATSAPP_ICON} size={24} />;
   const Fallback = Icon ?? CircleDot;
   return <Fallback aria-hidden="true" className="size-6 text-ink" />;
@@ -33,7 +33,7 @@ export function Benefits() {
   );
 }
 
-export function Steps({ steps }: { steps: PageConfig["steps"] }) {
+export function Steps({ steps, icons }: { steps: PageConfig["steps"]; icons?: readonly (LucideIcon | null)[] }) {
   const { heading, subtitle, items } = steps;
   if (items.length === 0) return null;
   return (
@@ -53,7 +53,7 @@ export function Steps({ steps }: { steps: PageConfig["steps"] }) {
                 <span aria-hidden="true" className="absolute top-14 bottom-0 left-7 w-px -translate-x-1/2 bg-line" />
               )}
               <div className="relative z-10 grid size-14 shrink-0 place-items-center rounded-xl border border-line bg-bg">
-                <StepIcon index={i} />
+                <StepIcon index={i} icons={icons} />
               </div>
               <div className={isLast ? "pt-2.5" : "pt-2.5 pb-10"}>
                 <h3 className="text-lg font-bold">{s.title}</h3>

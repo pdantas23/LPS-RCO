@@ -55,9 +55,9 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
     <section className="py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mb-8 md:mb-14 lg:mb-16">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-center gap-4 text-center">
             <h2 className="text-3xl font-medium md:text-4xl lg:text-5xl">{title}</h2>
-            {description ? <p className="max-w-lg text-muted-foreground">{description}</p> : null}
+            {description ? <p className="max-w-lg text-center text-muted-foreground">{description}</p> : null}
           </div>
         </div>
       </div>
