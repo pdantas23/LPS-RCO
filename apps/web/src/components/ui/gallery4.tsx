@@ -10,7 +10,7 @@ import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from "@/com
 // Gallery4 (shadcn/21st.dev), com a mesma estrutura e classes do original.
 // Ajustes: sem `data` de demonstração (sem conteúdo padrão), texto do link e rótulos
 // de acessibilidade em pt-BR (`cta`), `onItemClick` para o rastreamento (cta_click),
-// `container` do original trocado por largura máxima + gutter (e o primeiro card alinhado a esse gutter) e a cor `primary`
+// `container` do original trocado por largura máxima + gutter (o primeiro card alinhado a esse gutter; setas em faixas laterais fora da área dos cards) e a cor `primary`
 // do gradiente vem do azul da marca (tokens em globals.css).
 // ============================================================
 
@@ -66,8 +66,11 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
           setApi={setCarouselApi}
           opts={{ breakpoints: { "(max-width: 768px)": { dragFree: true } } }}
           aria-label={title}
+          // md+: faixas de 72 px dos dois lados, só para as setas (nenhum card passa por baixo delas).
+          // A largura máxima soma as duas faixas ao max-w-6xl do título, então o 1º card alinha com ele.
+          className="mx-auto w-full max-w-[calc(72rem+144px)] md:px-[72px]"
         >
-          <CarouselContent className="touch-pan-y ml-[max(0px,calc((100vw-72rem)/2))] 2xl:mr-[max(0rem,calc(50vw-700px))]">
+          <CarouselContent className="touch-pan-y ml-0">
             {items.map((item) => (
               <CarouselItem key={item.id} className="max-w-[320px] pl-[20px] lg:max-w-[360px]">
                 <div className="group relative h-full min-h-[30rem] max-w-full overflow-hidden rounded-xl md:aspect-[5/4] lg:aspect-[4/5]">
@@ -97,7 +100,7 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
             aria-label="Card anterior"
             onClick={() => carouselApi?.scrollPrev()}
             disabled={!canScrollPrev}
-            className="absolute top-1/2 left-3 z-10 hidden size-11 -translate-y-1/2 rounded-full border-line bg-bg/90 text-ink shadow-lg backdrop-blur hover:bg-surface md:inline-flex lg:left-5"
+            className="absolute top-1/2 left-0 z-10 hidden size-11 -translate-y-1/2 rounded-full border-line bg-bg/90 text-ink shadow-lg backdrop-blur hover:bg-surface md:left-[14px] md:inline-flex"
           >
             <ArrowLeft className="size-5" />
           </Button>
@@ -107,7 +110,7 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
             aria-label="Próximo card"
             onClick={() => carouselApi?.scrollNext()}
             disabled={!canScrollNext}
-            className="absolute top-1/2 right-3 z-10 hidden size-11 -translate-y-1/2 rounded-full border-line bg-bg/90 text-ink shadow-lg backdrop-blur hover:bg-surface md:inline-flex lg:right-5"
+            className="absolute top-1/2 right-0 z-10 hidden size-11 -translate-y-1/2 rounded-full border-line bg-bg/90 text-ink shadow-lg backdrop-blur hover:bg-surface md:right-[14px] md:inline-flex"
           >
             <ArrowRight className="size-5" />
           </Button>
