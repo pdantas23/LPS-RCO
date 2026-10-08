@@ -67,8 +67,8 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
           opts={{ breakpoints: { "(max-width: 768px)": { dragFree: true } } }}
           aria-label={title}
           // md+: faixas de 48 px dos dois lados, só para as setas (nenhum card passa por baixo delas).
-          // A largura máxima soma as duas faixas ao max-w-6xl do título, então o 1º card alinha com ele.
-          className="mx-auto w-full max-w-[calc(72rem+96px)] md:px-[48px]"
+          // Carrossel de ponta a ponta da tela (o título fica no container normal); em telas enormes para em 1800 px.
+          className="mx-auto w-full max-w-[1800px] md:px-[48px]"
         >
           <CarouselContent className="touch-pan-y ml-0">
             {items.map((item) => (
@@ -100,7 +100,7 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
             aria-label="Card anterior"
             onClick={() => carouselApi?.scrollPrev()}
             disabled={!canScrollPrev}
-            className="absolute top-1/2 left-0 z-10 hidden size-11 [&_svg]:size-7 -translate-y-1/2 text-ink/90 transition-colors hover:bg-transparent hover:text-brand disabled:opacity-30 md:left-[2px] md:inline-flex"
+            className="absolute top-1/2 left-0 z-10 hidden size-11 [&_svg]:size-7 -translate-y-1/2 text-ink/90 transition-colors hover:bg-transparent hover:text-brand disabled:opacity-30 md:left-[4px] md:inline-flex"
           >
             <ArrowLeft className="size-7" />
           </Button>
@@ -110,7 +110,7 @@ export function Gallery4({ title, description, items, action }: Gallery4Props) {
             aria-label="Próximo card"
             onClick={() => carouselApi?.scrollNext()}
             disabled={!canScrollNext}
-            className="absolute top-1/2 right-0 z-10 hidden size-11 [&_svg]:size-7 -translate-y-1/2 text-ink/90 transition-colors hover:bg-transparent hover:text-brand disabled:opacity-30 md:right-[2px] md:inline-flex"
+            className="absolute top-1/2 right-0 z-10 hidden size-11 [&_svg]:size-7 -translate-y-1/2 text-ink/90 transition-colors hover:bg-transparent hover:text-brand disabled:opacity-30 md:right-[4px] md:inline-flex"
           >
             <ArrowRight className="size-7" />
           </Button>
