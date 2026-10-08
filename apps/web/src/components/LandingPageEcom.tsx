@@ -50,12 +50,12 @@ export function LandingPageEcom() {
           <DarkGradientLayers />
         </div>
         <div className="relative mx-auto max-w-6xl">
-          <Logo className="mb-10" />
           <div className="grid items-center gap-14 md:grid-cols-2 md:gap-10">
-            <div>
+            <div className="flex flex-col items-center text-center">
+              <Logo className="mb-10" />
               <p className="mb-3 text-sm font-semibold tracking-wide text-brand uppercase">{ECOM_HERO.eyebrow}</p>
               <h1 className="text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl">{ECOM_HERO.title}</h1>
-              <p className="mt-5 max-w-xl text-lg text-mute">{ECOM_HERO.subtitle}</p>
+              <p className="mx-auto mt-5 max-w-xl text-lg text-mute">{ECOM_HERO.subtitle}</p>
               <div className="mt-8">
                 <HeroCta label={ECOM_HERO.cta} targetSelector={`#${FORM_ID}`} page={PAGE} location="hero" width={280} />
               </div>
