@@ -22,6 +22,11 @@
   --color-line: var(--line);
   --color-danger: var(--danger);
   --color-ok: var(--ok);
+  /* Nomes do shadcn/ui mapeados na identidade da RCO (usados por button, carousel e gallery4). */
+  --color-primary: var(--brand);
+  --color-primary-foreground: var(--ink);
+  --color-muted-foreground: var(--mute);
+  --color-accent: var(--surface);
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Utilitários `animate-*` do ShimmerButton (components/ui/shimmer-button.tsx):

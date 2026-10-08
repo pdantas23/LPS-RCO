@@ -49,3 +49,18 @@ describe("/lp-ecom: faixas e perfil", () => {
     expect(FATURAMENTOS_ECOM.map(perfilEcom)).toEqual(["Fora", "Dentro", "Dentro", "Dentro", "Dentro", "Dentro"]);
   });
 });
+
+describe("/lp-ecom: fotos das dores", () => {
+  it("cada dor tem foto local em public/ecom, abaixo de 150 KB, e há créditos", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const { ECOM_PAINS } = await import("./ecom");
+    const pub = path.resolve(__dirname, "../../public");
+    expect(ECOM_PAINS.items).toHaveLength(5);
+    for (const p of ECOM_PAINS.items) {
+      expect(p.image.startsWith("/ecom/"), p.image).toBe(true);
+      expect(fs.statSync(path.join(pub, p.image)).size, p.image).toBeLessThan(150 * 1024);
+    }
+    expect(fs.existsSync(path.join(pub, "ecom/CREDITOS.md"))).toBe(true);
+  });
+});

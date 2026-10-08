@@ -1,10 +1,11 @@
 import {
-  BarChart3, Megaphone, MessageCircle, Quote, Repeat, EyeOff, Image as ImageIcon, ShoppingCart, Tag, UserRound, Users, Wallet,
+  BarChart3, Megaphone, MessageCircle, Quote, Image as ImageIcon, ShoppingCart, Tag, UserRound, Users,
   type LucideIcon,
 } from "lucide-react";
-import { ECOM_FAQ, ECOM_HERO, ECOM_METHOD, ECOM_PAINS, ECOM_PROOF, ECOM_SERVICE, PROOF_PLACEHOLDERS } from "@/content/ecom";
+import { ECOM_FAQ, ECOM_HERO, ECOM_METHOD, ECOM_PROOF, ECOM_SERVICE, PROOF_PLACEHOLDERS } from "@/content/ecom";
 import { EcomHeroVisual } from "./EcomHeroVisual";
 import { EcomLeadForm } from "./EcomLeadForm";
+import { EcomPains } from "./EcomPains";
 import { Faq } from "./Faq";
 import { HeroCta } from "./HeroCta";
 import { Logo } from "./Logo";
@@ -15,11 +16,7 @@ const PAGE = "ECOM";
 const FORM_ID = "formulario";
 
 const ICONS: Record<string, LucideIcon> = {
-  wallet: Wallet,
-  tag: Tag,
   cart: ShoppingCart,
-  "eye-off": EyeOff,
-  repeat: Repeat,
   megaphone: Megaphone,
   "bar-chart": BarChart3,
   image: ImageIcon,
@@ -65,19 +62,8 @@ export function LandingPageEcom() {
         </div>
       </section>
 
-      {/* ---------- 2 Dores ---------- */}
-      <section className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
-        <h2 className="mb-10 text-center text-2xl font-bold sm:text-3xl">{ECOM_PAINS.heading}</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ECOM_PAINS.items.map((p) => (
-            <div key={p.title} className="rounded-2xl border border-line bg-surface p-6">
-              <IconBox name={p.icon} />
-              <h3 className="mt-4 text-lg font-bold">{p.title}</h3>
-              <p className="mt-1.5 text-mute">{p.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ---------- 2 Dores (carrossel Gallery4) ---------- */}
+      <EcomPains page={PAGE} formId={FORM_ID} />
 
       {/* ---------- 3 O que a RCO faz ---------- */}
       <section className="mx-auto max-w-4xl px-5 py-12 sm:py-16">

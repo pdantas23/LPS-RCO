@@ -32,12 +32,14 @@ export const ECOM_HERO = {
 
 export const ECOM_PAINS = {
   heading: "Isso acontece na sua loja?",
+  description: "Cinco situações comuns em loja online que investe em anúncio.",
+  cta: "Quero resolver isso",
   items: [
-    { icon: "wallet", title: "Gasta em anúncio e não sabe o que voltou", text: "O dinheiro sai todo mês, mas ninguém mostra quanto de venda veio de cada real investido." },
-    { icon: "tag", title: "Só vende em promoção", text: "Sem desconto o pedido não entra, e a margem some junto com a promoção." },
-    { icon: "cart", title: "Carrinho abandonado sem resposta", text: "A pessoa escolhe o produto, não finaliza a compra e ninguém volta a falar com ela." },
-    { icon: "eye-off", title: "Relatório que ninguém entende", text: "Alcance, clique e curtida no relatório, mas nenhuma resposta sobre venda e lucro." },
-    { icon: "repeat", title: "Cliente compra uma vez e não volta", text: "Cada venda parece começar do zero, porque ninguém cuida de quem já comprou." },
+    { id: "anuncio", image: "/ecom/dor-anuncio.webp", title: "Gasta em anúncio e não sabe o que voltou", text: "O dinheiro sai todo mês, mas ninguém mostra quanto de venda veio de cada real investido." },
+    { id: "promocao", image: "/ecom/dor-promocao.webp", title: "Só vende em promoção", text: "Sem desconto o pedido não entra, e a margem some junto com a promoção." },
+    { id: "carrinho", image: "/ecom/dor-carrinho.webp", title: "Carrinho abandonado sem resposta", text: "A pessoa escolhe o produto, não finaliza a compra e ninguém volta a falar com ela." },
+    { id: "relatorio", image: "/ecom/dor-relatorio.webp", title: "Relatório que ninguém entende", text: "Alcance, clique e curtida no relatório, mas nenhuma resposta sobre venda e lucro." },
+    { id: "cliente", image: "/ecom/dor-cliente.webp", title: "Cliente compra uma vez e não volta", text: "Cada venda parece começar do zero, porque ninguém cuida de quem já comprou." },
   ],
 } as const;
 
