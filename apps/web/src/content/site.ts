@@ -21,8 +21,8 @@ export const SHOW_PLACEHOLDER_BADGE = false;
 export const LP01_ATIVA = true;
 /** /lp02 = P04 (Performance com VSL). Fora do ar por decisão do Philip (06/10): a rota está pronta, mas desligada. */
 export const LP02_ATIVA = false;
-/** /lp-ecom = LP de e-commerce, ainda não existe: rota reservada, sem conteúdo. */
-export const LP_ECOM_ATIVA = false;
+/** /lp-ecom = LP de e-commerce (content/ecom.ts). */
+export const LP_ECOM_ATIVA = true;
 
 /** Container do Google Tag Manager. Vazio = GTM não é carregado. Constante (não env) de propósito: ver o topo do arquivo. */
 export const GTM_ID = "GTM-P9XNXV2B";

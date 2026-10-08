@@ -7,7 +7,7 @@ import { LP01_ATIVA, LP02_ATIVA, LP_ECOM_ATIVA } from "./site";
 //   /             form        P02                 build estático (formulario/)        origem p02 (ver README)
 //   /lp01         lp01        P05                 este app Next                       origem p05 (token P05)
 //   /lp02         lp02        P04                 este app Next (DESLIGADA)           origem p04 (token P04)
-//   /lp-ecom      lp-ecom     ECOM                reservada, sem conteúdo (DESLIGADA) (ainda não existe)
+//   /lp-ecom      lp-ecom     ECOM                este app Next (LP de e-commerce)    origem lp-ecom (token ECOM)
 //
 // `lp_origem` é o parâmetro padrão de TODO evento do dataLayer (docs/gtm-eventos.md);
 // `page_id` continua sendo o id interno (o mesmo que o COMERCIAL conhece). O vínculo com

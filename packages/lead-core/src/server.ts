@@ -8,5 +8,5 @@ export * from "./outbox/worker";
 export { normalizeBrPhone, phoneTail } from "./phone";
 export { sanitizeTracking, cleanText, TRACKING_KEYS } from "./tracking";
 export type { Tracking, TrackingKey } from "./tracking";
-export { createLeadSchema, createLeadFormSchema, fieldErrors } from "./schema";
-export type { LeadInput, LeadSchemaConfig } from "./schema";
+export { createLeadSchema, createLeadFormSchema, createEcomLeadSchema, createEcomFormSchema, fieldErrors } from "./schema";
+export type { LeadInput, LeadSchemaConfig, EcomSchemaConfig, EcomLeadInput } from "./schema";

@@ -7,7 +7,7 @@ Monorepo das landing pages da RCO Hub, servidas num **domínio único** por **um
 | `/` (e `/curioso`) | Formulário P02 (`formulario/`, Vite, do Aerton) | no ar | origem **p02** (ver abaixo) |
 | `/lp01` | P05, Performance sem VSL (`apps/web`, Next) | no ar | origem **p05** (token `P05`) |
 | `/lp02` | P04, Performance com VSL (`apps/web`) | **desligada** (404), rota pronta | origem **p04** (token `P04`) |
-| `/lp-ecom` | LP de e-commerce | **reservada**, sem conteúdo, desligada (404) | ainda não existe |
+| `/lp-ecom` | LP de e-commerce (`apps/web`, sem vídeo, formulário próprio de 5 perguntas) | **pronta** (`LP_ECOM_ATIVA=true`); no ar depois do deploy | origem **lp-ecom** (token `ECOM`) |
 
 A P01 (LP de venda do CRM RCO, do Aerton) saiu deste repositório em 06/10/2026: ela fica em outra rota/projeto, fora de lp.rcohub.com.br.
 
@@ -34,6 +34,7 @@ Dockerfile                imagem única (formulário + Next)
 ## Para onde cada página manda o lead
 
 - **`/lp01` (P05) e `/lp02` (P04):** o servidor da LP (`/api/lead`) grava o lead em fila de arquivos e entrega ao COMERCIAL por `POST {COMERCIAL_BASE_URL}/api/webhooks/leads/respondi/<token>`, com `Página de origem` = `P05`/`P04` e token `COMERCIAL_LEAD_TOKEN_P05`/`_P04`. **A rota nova não muda isso**: o vínculo usa o id interno (`formId` `lp-p05`/`lp-p04`), não o caminho.
+- **`/lp-ecom` (ECOM):** mesmo caminho (`/api/lead`, fila, token `COMERCIAL_LEAD_TOKEN_ECOM`, `form_id` `lp-ecom`). Respostas enviadas, com estes rótulos exatos: `Nome`, `WhatsApp`, `Email`, `Faturamento`, `Investimento em anúncio`, `Perfil` ("Dentro" ou "Fora", calculado no servidor: faturamento "Abaixo de R$ 30 mil" = Fora, o lead é enviado normalmente) e as de campanha presentes (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `fbclid`, `wbraid`, `gbraid`). Não envia `Nicho` nem `Página de origem` (a origem é a integração). Texto: `content/ecom.ts`; faixas: `content/options.ts`; espaços de prova a trocar: `PROOF_PLACEHOLDERS` em `content/ecom.ts`.
 - **`/` (P02):** o navegador chama direto o Supabase da RCO (`sb.rcoacademy.com.br`, RPC `capturar_lead_performance_rco`, chave ANÔNIMA). O próprio banco (migration `formulario/supabase/migrations/002`, pg_cron a cada minuto) reenvia ao webhook Respondi do COMERCIAL (`form_id` `lp-p02`); a URL do webhook, com o token, fica no Vault do banco. Esse caminho **não passa pelo servidor Next nem pelo outbox**. Qual "origem" o COMERCIAL grava para esse token depende de como a integração foi cadastrada lá (não está neste repositório: conferir no COMERCIAL).
 
 ## Flags (ligar e desligar rotas)
@@ -43,7 +44,7 @@ Em `apps/web/src/content/site.ts` (constantes em código, de propósito: o EasyP
 ```ts
 export const LP01_ATIVA = true;       // /lp01
 export const LP02_ATIVA = false;      // /lp02: para ligar, troque para true
-export const LP_ECOM_ATIVA = false;   // /lp-ecom: reservada
+export const LP_ECOM_ATIVA = true;    // /lp-ecom: LP de e-commerce
 ```
 
 Desligada = **404** (sem conteúdo, sem contar visita no dataLayer, e `POST /api/lead` recusa lead dessa página com 404 `page_inactive`). Escolhi 404 e não redirecionar para `/` para não mandar tráfego de anúncio para outro formulário sem ninguém ter decidido isso, e para a rota não aparecer no Google. Todas as páginas saem com `noindex` enquanto `ALLOW_INDEXING=false` (mesmo arquivo). Para ligar a `/lp02`: troque a flag, `npm test` (o teste `lps.test.ts` guarda o estado entregue e vai pedir a atualização), publique. `/p04` e `/p05` antigos foram removidos (nunca estiveram no ar).
@@ -71,6 +72,7 @@ Um serviço "App" por **Dockerfile** na raiz, contexto = raiz do repositório, p
 | Build arg | `VITE_SUPABASE_ANON_KEY` | chave ANÔNIMA (pública por natureza; só alcança a RPC de captação). O build **falha** sem as duas. |
 | Env de runtime | `COMERCIAL_BASE_URL` | `https://comercial.rcoacademy.com.br` |
 | Env de runtime | `COMERCIAL_LEAD_TOKEN_P05` | token da integração da LP05 (atenção: valor atual de produção ainda a decidir) |
+| Env de runtime | `COMERCIAL_LEAD_TOKEN_ECOM` | token da integração "lp-ecom" (sem ele, os leads da /lp-ecom ficam PENDENTES na fila e saem quando o token entrar) |
 | Env de runtime | `COMERCIAL_LEAD_TOKEN_P04` | token da LP04 (pode ficar vazio enquanto a `/lp02` estiver desligada) |
 | Env de runtime (opcional) | `LEAD_OUTBOX_DIR` | já `/data/outbox` na imagem |
 | Env de runtime (opcional) | `LEAD_ALLOWED_ORIGINS`, `OUTBOX_SENT_RETENTION_DAYS` | ver `docs/fluxo-e-operacao.md` |

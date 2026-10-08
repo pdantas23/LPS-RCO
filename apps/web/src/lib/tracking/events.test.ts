@@ -119,3 +119,20 @@ describe("form_error", () => {
     expect(dataLayer[0]).toMatchObject({ event: "form_error", error_type: "network" });
   });
 });
+
+describe("generate_lead da /lp-ecom", () => {
+  it("mesmo evento das outras LPs, sem nicho e sem perfil (a conversão não é filtrada no GTM)", async () => {
+    const out = await submitLead({
+      values: { name: "Maria da Silva", whatsapp: "(11) 98888-7777", email: "m@loja.com.br", faturamento: "Abaixo de R$ 30 mil", investimento: "Ainda não invisto" },
+      respondentId: ID,
+      page: "ECOM",
+      tracking: {},
+      fetchFn: fakeFetch(200),
+    });
+    expect(out.kind).toBe("done");
+    expect(dataLayer).toEqual([
+      { event: "generate_lead", lp_origem: "lp-ecom", page_id: "ECOM", faturamento: "Abaixo de R$ 30 mil", event_id: ID },
+    ]);
+    expect(JSON.stringify(dataLayer)).not.toMatch(/Maria|98888|loja\.com/);
+  });
+});

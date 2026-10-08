@@ -76,3 +76,67 @@ export function fieldErrors(error: z.ZodError): Record<string, string> {
   }
   return out;
 }
+
+// ============================================================
+// LP de e-commerce (/lp-ecom): 5 perguntas, sem nicho. O WhatsApp é pedido duas
+// vezes no navegador (confirmação); o servidor não recebe a confirmação.
+// O "Perfil" (Dentro/Fora) NUNCA vem do navegador: o servidor calcula a partir do faturamento.
+// ============================================================
+
+export interface EcomSchemaConfig {
+  page: string;
+  faturamentos: readonly [string, ...string[]];
+  investimentos: readonly [string, ...string[]];
+}
+
+/** Email com domínio de verdade: algo@dominio.tld (z.email já exige ponto e TLD; aqui barra espaços e domínio com hífen nas pontas). */
+const emailComDominio = (v: string) =>
+  z.email().safeParse(v).success && /^[^@\s]+@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i.test(v);
+
+function ecomFields(cfg: EcomSchemaConfig) {
+  return {
+    name: text(120)
+      .refine((v) => v.length >= 2, "Informe seu nome.")
+      .refine((v) => !parecesSpam(v), "Informe apenas seu nome."),
+    whatsapp: z
+      .string()
+      .refine((v) => normalizeBrPhone(v) !== null, "Informe um WhatsApp válido: DDD + número com 9 dígitos."),
+    email: text(254).refine(emailComDominio, "Informe um email válido, com @ e domínio (ex.: voce@loja.com.br)."),
+    faturamento: z.enum(cfg.faturamentos, { error: "Escolha uma opção." }),
+    investimento: z.enum(cfg.investimentos, { error: "Escolha uma opção." }),
+    website: z.string().max(200).optional(),
+  };
+}
+
+export function createEcomLeadSchema(cfg: EcomSchemaConfig) {
+  return z.object({
+    respondentId: z.uuid({ error: "Identificador de envio inválido." }),
+    page: z.literal(cfg.page, { error: "Página inválida." }),
+    ...ecomFields(cfg),
+    tracking: z.unknown().optional(),
+  });
+}
+
+export function createEcomFormSchema(cfg: EcomSchemaConfig) {
+  return z
+    .object({
+      ...ecomFields(cfg),
+      whatsappConfirm: z.string().min(1, "Repita o seu WhatsApp."),
+    })
+    .refine(
+      (v) => {
+        const a = normalizeBrPhone(v.whatsapp ?? "");
+        const b = normalizeBrPhone(v.whatsappConfirm ?? "");
+        // Só compara quando os dois são números válidos: campo vazio ou inválido já tem erro próprio.
+        return !(v.whatsappConfirm && a && b && a !== b) && !(v.whatsappConfirm && a && !b);
+      },
+      {
+        path: ["whatsappConfirm"],
+        error: "Os números não conferem. Digite o mesmo WhatsApp.",
+        // Roda mesmo com erro em outros campos: a pessoa vê todos os problemas de uma vez.
+        when: () => true,
+      },
+    );
+}
+
+export type EcomLeadInput = z.infer<ReturnType<typeof createEcomLeadSchema>>;

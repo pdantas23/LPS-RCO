@@ -1,6 +1,7 @@
 import type { VideoSource } from "@/components/video/types";
 import type { PainItem } from "@/components/ui/scroll-gallery";
 import type { Testimonial } from "@/components/TestimonialsMarquee";
+import { ECOM_PAGE } from "./ecom";
 
 // ============================================================
 // CONTEÚDO DAS PÁGINAS.
@@ -31,11 +32,15 @@ import type { Testimonial } from "@/components/TestimonialsMarquee";
 // que existir; o layout não muda.
 // ============================================================
 
-export const PAGE_IDS = ["P04", "P05"] as const;
+export const FORM_PAGE_IDS = ["P04", "P05"] as const;
+/** Páginas com o formulário padrão (nicho + faturamento). */
+export type FormPageId = (typeof FORM_PAGE_IDS)[number];
+/** Todas as páginas do Next. A "ECOM" tem conteúdo e formulário próprios (content/ecom.ts). */
+export const PAGE_IDS = ["P04", "P05", "ECOM"] as const;
 export type PageId = (typeof PAGE_IDS)[number];
 
 export interface PageConfig {
-  id: PageId;
+  id: FormPageId;
   /** Caminho público da página. */
   path: string;
   /** Vai em "Página de origem" no COMERCIAL. */
@@ -176,7 +181,7 @@ const steps = {
   ],
 };
 
-export const PAGES: Record<PageId, PageConfig> = {
+export const PAGES: Record<FormPageId, PageConfig> = {
   P04: {
     id: "P04",
     path: "/lp02",
@@ -261,6 +266,13 @@ export const PAGES: Record<PageId, PageConfig> = {
 };
 
 export function pageMeta(id: PageId) {
+  if (id === "ECOM") return { id, formId: ECOM_PAGE.formId, formName: ECOM_PAGE.formName };
   const p = PAGES[id];
   return { id: p.id, formId: p.formId, formName: p.formName };
+}
+
+/** Caminho público de cada página (para o page_view). */
+export function pageIdOfPath(path: string): PageId | undefined {
+  if (path === ECOM_PAGE.path) return "ECOM";
+  return FORM_PAGE_IDS.find((p) => PAGES[p].path === path);
 }

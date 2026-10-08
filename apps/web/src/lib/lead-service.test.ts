@@ -261,3 +261,76 @@ describe("POST /api/lead — LP desligada não recebe lead (flags de content/sit
     expect(outbox.get(b.respondentId as string)?.page).toBe("P05");
   });
 });
+
+describe("POST /api/lead — /lp-ecom (ECOM)", () => {
+  const ecom = (over: Record<string, unknown> = {}) => ({
+    respondentId: crypto.randomUUID(),
+    page: "ECOM",
+    name: "Maria Souza",
+    whatsapp: "(11) 99999-8888",
+    email: "maria@sualoja.com.br",
+    faturamento: "R$ 50 mil a 100 mil",
+    investimento: "R$ 2 mil a 5 mil",
+    website: "",
+    tracking: { utm_source: "meta", fbclid: "abc", gclid: "g1", ignorado: "x" },
+    ...over,
+  });
+
+  it("payload com as chaves exatas, sem Nicho nem Página de origem, Perfil Dentro", async () => {
+    const b = ecom();
+    const res = await handleLeadRequest(post(b), deps());
+    expect(res.status).toBe(200);
+    const item = outbox.get(b.respondentId as string)!;
+    expect(item.page).toBe("ECOM");
+    expect(item.payload.form).toEqual({ form_id: "lp-ecom", form_name: "LP E-commerce" });
+    expect(item.payload.respondent.answers).toEqual({
+      Nome: "Maria Souza",
+      WhatsApp: "5511999998888",
+      Email: "maria@sualoja.com.br",
+      Faturamento: "R$ 50 mil a 100 mil",
+      "Investimento em anúncio": "R$ 2 mil a 5 mil",
+      Perfil: "Dentro",
+      utm_source: "meta",
+      gclid: "g1",
+      fbclid: "abc",
+    });
+  });
+
+  it("Abaixo de R$ 30 mil ENVIA normalmente, com Perfil Fora", async () => {
+    const b = ecom({ faturamento: "Abaixo de R$ 30 mil" });
+    const res = await handleLeadRequest(post(b), deps());
+    expect(res.status).toBe(200);
+    expect(outbox.get(b.respondentId as string)!.payload.respondent.answers.Perfil).toBe("Fora");
+  });
+
+  it("o Perfil nunca vem do navegador (campo enviado é ignorado)", async () => {
+    const b = ecom({ faturamento: "Abaixo de R$ 30 mil", Perfil: "Dentro", perfil: "Dentro" });
+    await handleLeadRequest(post(b), deps());
+    expect(outbox.get(b.respondentId as string)!.payload.respondent.answers.Perfil).toBe("Fora");
+  });
+
+  it("422 sem investimento, com faixa inventada ou email sem domínio; nada gravado", async () => {
+    for (const over of [{ investimento: undefined }, { faturamento: "R$ 1" }, { email: "maria@loja" }, { email: "maria@.com" }]) {
+      const b = ecom(over);
+      const res = await handleLeadRequest(post(b), deps());
+      expect(res.status).toBe(422);
+      expect(outbox.get(b.respondentId as string)).toBeNull();
+    }
+  });
+
+  it("entrega usa o token da página ECOM (item.page)", async () => {
+    const sent: OutboxItem[] = [];
+    const send = async (item: OutboxItem) => {
+      sent.push(item);
+      return ok;
+    };
+    await handleLeadRequest(post(ecom()), deps({ send }));
+    await scheduled[0]!();
+    expect(sent.map((i) => i.page)).toEqual(["ECOM"]);
+  });
+
+  it("flag LP_ECOM_ATIVA=false: 404", async () => {
+    const res = await handleLeadRequest(post(ecom()), deps({ isPageActive: (id) => id !== "ECOM" }));
+    expect(res.status).toBe(404);
+  });
+});

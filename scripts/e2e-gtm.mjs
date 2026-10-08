@@ -133,7 +133,7 @@ if (WITH_LP02) await testNext("/lp02", "lp02", "P04");
 
 // ---------------- rotas desligadas / antigas ----------------
 console.log("\nrotas desligadas");
-for (const [p, code] of [["/lp-ecom", 404], ["/p04", 404], ["/p05", 404], ...(WITH_LP02 ? [] : [["/lp02", 404]])]) {
+for (const [p, code] of [["/p04", 404], ["/p05", 404], ...(WITH_LP02 ? [] : [["/lp02", 404]])]) {
   const r = await fetch(BASE + p);
   check(r.status === code, `${p} -> ${r.status}`);
 }

@@ -37,7 +37,7 @@ export interface EventMap {
   /** `fields` = só os NOMES dos campos com erro de validação, separados por vírgula. */
   form_error: { page_id: string; error_type: FormErrorType; fields?: string };
   /** Lead enviado com sucesso. `event_id` é o mesmo `respondent_id` enviado ao COMERCIAL (deduplicação com CAPI). */
-  generate_lead: { page_id: string; nicho: string; faturamento: string; event_id: string };
+  generate_lead: { page_id: string; nicho?: string; faturamento: string; event_id: string };
   faq_open: { page_id: string; question: string; question_index: number };
   video_play: { page_id: string; video_provider: string };
   video_progress: { page_id: string; video_provider: string; percent: VideoMilestone };

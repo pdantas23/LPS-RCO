@@ -16,6 +16,7 @@ export function HeroCta({
   targetSelector,
   page,
   location,
+  width = 240,
 }: {
   label: string;
   targetSelector: string;
@@ -23,10 +24,11 @@ export function HeroCta({
   page: string;
   /** Onde na página está o botão (ex.: hero, resumo_oferta, chamada_final), para o `cta_click`. */
   location: string;
+  width?: number;
 }) {
   return (
     <ShimmerButton
-      width={240}
+      width={width}
       onClick={() => {
         track("cta_click", { page_id: page, cta_location: location, cta_text: label });
         document.querySelector(targetSelector)?.scrollIntoView({ behavior: "smooth" });

@@ -23,6 +23,9 @@ export const ANSWER_KEYS = {
   nicho: "Nicho",
   faturamento: "Faturamento",
   origem: "Página de origem",
+  /** Só /lp-ecom. */
+  investimento: "Investimento em anúncio",
+  perfil: "Perfil",
 } as const;
 
 export interface PageMeta {
@@ -66,6 +69,42 @@ export function buildRespondiPayload(input: BuildPayloadInput): RespondiBody {
     [ANSWER_KEYS.nicho]: lead.nicho,
     [ANSWER_KEYS.faturamento]: lead.faturamento,
     [ANSWER_KEYS.origem]: page.id,
+  };
+  for (const key of TRACKING_KEYS) {
+    const value = tracking[key];
+    if (value) answers[key] = value;
+  }
+  return {
+    form: { form_id: page.formId, form_name: page.formName },
+    respondent: { respondent_id: respondentId, status: "completed", answers },
+  };
+}
+
+export interface BuildEcomPayloadInput {
+  page: PageMeta;
+  respondentId: string;
+  lead: {
+    name: string;
+    whatsappE164: string;
+    email: string;
+    faturamento: string;
+    investimento: string;
+    /** Calculado no servidor a partir do faturamento. */
+    perfil: "Dentro" | "Fora";
+  };
+  tracking: Tracking;
+}
+
+/** /lp-ecom: chaves Nome, WhatsApp, Email, Faturamento, Investimento em anúncio, Perfil (+ campanha). Sem Nicho e sem Página de origem (a origem é a integração/token). */
+export function buildEcomRespondiPayload(input: BuildEcomPayloadInput): RespondiBody {
+  const { page, respondentId, lead, tracking } = input;
+  const answers: Record<string, string> = {
+    [ANSWER_KEYS.nome]: lead.name,
+    [ANSWER_KEYS.whatsapp]: lead.whatsappE164,
+    [ANSWER_KEYS.email]: lead.email,
+    [ANSWER_KEYS.faturamento]: lead.faturamento,
+    [ANSWER_KEYS.investimento]: lead.investimento,
+    [ANSWER_KEYS.perfil]: lead.perfil,
   };
   for (const key of TRACKING_KEYS) {
     const value = tracking[key];

@@ -20,7 +20,7 @@ describe("prévia de compartilhamento", () => {
   });
 
   it("imagens existem, são PNG 1200x630 e cabem em 300 KB", () => {
-    for (const f of ["og/lp.png", "og/form.png"]) {
+    for (const f of ["og/lp.png", "og/form.png", "og/ecom.png"]) {
       const p = path.join(pub, f);
       expect(existsSync(p), f).toBe(true);
       expect(statSync(p).size, f).toBeLessThan(300 * 1024);

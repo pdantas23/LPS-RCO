@@ -1,4 +1,5 @@
 import {
+  buildEcomRespondiPayload,
   buildRespondiPayload,
   deliverItem,
   fieldErrors,
@@ -13,7 +14,8 @@ import {
 } from "@rco/lead-core/server";
 import { isPageIdActive } from "@/content/lps";
 import { pageMeta, type PageId } from "@/content/pages";
-import { leadSchema } from "./lead-schema";
+import { perfilEcom } from "@/content/options";
+import { ecomLeadSchema, leadSchema } from "./lead-schema";
 
 // ============================================================
 // POST /api/lead — a parte que roda no SERVIDOR da LP.
@@ -110,7 +112,9 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
   const ip = rateIp.check(clientIp(req));
   if (!ip.ok) return json(429, { ok: false, error: "rate_limited" }, { "retry-after": String(ip.retryAfterSec) });
 
-  const parsed = leadSchema.safeParse(data);
+  // /lp-ecom tem formulário próprio (sem nicho, com investimento); as demais usam o padrão.
+  const isEcom = (data as { page?: unknown }).page === "ECOM";
+  const parsed = isEcom ? ecomLeadSchema.safeParse(data) : leadSchema.safeParse(data);
   if (!parsed.success) return json(422, { ok: false, errors: fieldErrors(parsed.error) });
   const lead = parsed.data;
 
@@ -138,12 +142,29 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
     return json(200, { ok: true, id: recent.id, duplicate: true });
   }
 
-  const payload = buildRespondiPayload({
-    page: pageMeta(page),
-    respondentId: lead.respondentId,
-    lead: { name: lead.name, whatsappE164: e164, email: lead.email, nicho: lead.nicho, faturamento: lead.faturamento },
-    tracking: sanitizeTracking(lead.tracking),
-  });
+  const tracking = sanitizeTracking(lead.tracking);
+  const payload =
+    "investimento" in lead
+      ? buildEcomRespondiPayload({
+          page: pageMeta(page),
+          respondentId: lead.respondentId,
+          // Perfil calculado AQUI, nunca aceito do navegador.
+          lead: {
+            name: lead.name,
+            whatsappE164: e164,
+            email: lead.email,
+            faturamento: lead.faturamento,
+            investimento: lead.investimento,
+            perfil: perfilEcom(lead.faturamento),
+          },
+          tracking,
+        })
+      : buildRespondiPayload({
+          page: pageMeta(page),
+          respondentId: lead.respondentId,
+          lead: { name: lead.name, whatsappE164: e164, email: lead.email, nicho: lead.nicho, faturamento: lead.faturamento },
+          tracking,
+        });
 
   const item: OutboxItem = {
     id: lead.respondentId,

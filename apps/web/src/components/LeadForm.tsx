@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { formatBrPhoneInput } from "@rco/lead-core/phone";
 import { FATURAMENTOS, NICHOS } from "@/content/options";
-import type { PageConfig, PageId } from "@/content/pages";
+import type { FormPageId, PageConfig } from "@/content/pages";
 import { leadFormSchema } from "@/lib/lead-schema";
 import { submitLead, type LeadValues } from "@/lib/lead-submit";
 import { newId, track } from "@/lib/tracking/events";
@@ -19,10 +19,10 @@ type Status = { kind: "idle" } | { kind: "sending" } | { kind: "done" } | { kind
 
 // Mesma altura e largura pros 4 campos (2 inputs + 2 selects): a única
 // diferença entre eles é o conteúdo, nunca o tamanho da caixa.
-const FIELD =
+export const FIELD =
   "h-14 w-full rounded-xl border border-line bg-bg px-4 text-base text-ink placeholder:text-mute/70 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand aria-[invalid=true]:border-danger";
 
-export function LeadForm({ page, copy }: { page: PageId; copy: PageConfig["form"] }) {
+export function LeadForm({ page, copy }: { page: FormPageId; copy: PageConfig["form"] }) {
   // Um id por "tentativa de envio": reenviar (duplo clique, erro de rede) usa o
   // MESMO id, e o servidor não duplica. É também o event_id do rastreamento.
   const [respondentId] = useState(() => newId());
@@ -212,7 +212,7 @@ export function LeadForm({ page, copy }: { page: PageId; copy: PageConfig["form"
   );
 }
 
-function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
+export function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium">

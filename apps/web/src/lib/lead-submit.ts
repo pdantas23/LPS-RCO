@@ -14,13 +14,22 @@ export interface LeadValues {
   website?: string;
 }
 
+export interface EcomLeadValues {
+  name: string;
+  whatsapp: string;
+  email: string;
+  faturamento: string;
+  investimento: string;
+  website?: string;
+}
+
 export type SubmitOutcome =
   | { kind: "done" }
   | { kind: "field_errors"; errors: Record<string, string> }
   | { kind: "error"; message: string };
 
 export async function submitLead(args: {
-  values: LeadValues;
+  values: LeadValues | EcomLeadValues;
   respondentId: string;
   page: PageId;
   tracking: Tracking;
@@ -36,9 +45,10 @@ export async function submitLead(args: {
     });
     if (res.ok) {
       // Só categorias e o id da tentativa: nome, WhatsApp e email NUNCA vão ao dataLayer.
+      // Mesmo evento em todas as LPs. A /lp-ecom não tem nicho (parâmetro omitido).
       track("generate_lead", {
         page_id: page,
-        nicho: values.nicho,
+        ...("nicho" in values ? { nicho: values.nicho } : {}),
         faturamento: values.faturamento,
         event_id: respondentId,
       });
