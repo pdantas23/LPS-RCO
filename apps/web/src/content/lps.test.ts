@@ -64,3 +64,18 @@ describe("/lp-ecom: fotos das dores", () => {
     expect(fs.existsSync(path.join(pub, "ecom/CREDITOS.md"))).toBe(true);
   });
 });
+
+describe("/lp-ecom: carrossel das dores", () => {
+  it("botão único abaixo (cta_location dores), sem link nos cards, sem corte de texto e sem bolinhas", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.resolve(__dirname, "../components");
+    const pains = fs.readFileSync(path.join(dir, "EcomPains.tsx"), "utf8");
+    const gallery = fs.readFileSync(path.join(dir, "ui/gallery4.tsx"), "utf8");
+    expect(pains).toContain('location="dores"');
+    expect(gallery).not.toContain("line-clamp");
+    expect(gallery).not.toContain("<a ");
+    expect(gallery).not.toContain("Ir para o card");
+    expect(gallery).toContain("Próximo card");
+  });
+});
