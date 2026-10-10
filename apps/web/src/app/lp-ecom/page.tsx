@@ -8,6 +8,8 @@ import { OG_IMAGE_ECOM, shareMetadata } from "@/lib/share";
 export const metadata: Metadata = shareMetadata({
   title: ECOM_PAGE.title,
   description: ECOM_PAGE.description,
+  ogTitle: ECOM_PAGE.ogTitle,
+  ogDescription: ECOM_PAGE.ogDescription,
   path: ECOM_PAGE.path,
   image: OG_IMAGE_ECOM,
 });

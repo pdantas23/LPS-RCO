@@ -30,7 +30,7 @@ Next: snippet no layout raiz (`components/tracking/Analytics.tsx`, `next/script`
 | Evento | Quando | Parâmetros além de `lp_origem` e `page_id` | LPs |
 |---|---|---|---|
 | `page_view` | Entrada na página (e navegação client-side no Next) | `page_path`; `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `fbclid` (só os presentes; o Next também `wbraid`, `gbraid`) | todas |
-| `cta_click` | Clique em botão que rola ao formulário | `cta_location` (na lp-ecom: `hero`, `metodologia`), `cta_text` | lp01, lp02, lp-ecom (o formulário não tem CTA) |
+| `cta_click` | Clique em botão que rola ao formulário | `cta_location` (na lp-ecom: `menu`, `hero`, `servico`, `fechamento`), `cta_text` | lp01, lp02, lp-ecom (o formulário não tem CTA) |
 | `form_start` | Primeiro foco/interação no formulário (1x por visita) | | todas |
 | `form_submit` | Tentativa de envio (clique no botão final), válida ou não | | todas |
 | `form_error` | Falha ao enviar ou validar | `error_type`: `validation` \| `server` \| `network` \| `rate_limit`; `fields` (Next, só em `validation`); `error_detail` (formulário: código original do erro) | todas |
@@ -44,7 +44,7 @@ Campos legados do formulário (mantidos, o Aerton já os usava): `page_type` (`p
 Notas:
 - **`event_id`**: é o mesmo id que vai ao COMERCIAL (`respondent_id` no Next; `submission_id` no formulário). Use o mesmo valor como `event_id` do Pixel e da Conversions API para o Meta deduplicar. Reenvio da mesma tentativa reaproveita o id.
 - **`nicho` e `faturamento` são categorias, mas com vocabulários DIFERENTES**: no Next vão os rótulos de `apps/web/src/content/options.ts` (ex. "Odontologia", "Até R$ 30 mil por mês"); no formulário vão os códigos de `formulario/src/formulario/config.ts` (ex. `saude`, `10k_30k`). Nunca texto livre ("Outro" do formulário vai só como `outro`). Para relatório cruzado entre LPs, mapear no GA4/Looker.
-- **/lp-ecom:** `generate_lead` é o mesmo evento das outras LPs, com `faturamento` (faixa da loja, ex. "Abaixo de R$ 30 mil") e **sem `nicho`** (a página não pergunta nicho). Não há parâmetro de perfil: o lead "Fora" (faturamento abaixo de R$ 30 mil) também dispara `generate_lead` e é marcado só no COMERCIAL (resposta "Perfil"). Sem vídeo, sem banner de cookies. `form_error`/`form_start`/`faq_open` iguais às outras.
+- **/lp-ecom:** `generate_lead` é o mesmo evento das outras LPs, com `faturamento` (faixa da loja, ex. "Até R$ 29.999") e **sem `nicho`** (a página não pergunta nicho). Não há parâmetro de perfil: o lead "Fora" (faturamento "Até R$ 29.999") também dispara `generate_lead` e é marcado só no COMERCIAL (resposta "Perfil"). Sem vídeo, sem banner de cookies. `form_error`/`form_start`/`faq_open` iguais às outras.
 - **Vídeo:** a P04/lp02 tem só um espaço reservado, que NÃO gera `video_play`/`video_progress`. O gancho está em `components/video/VideoSlot.tsx`.
 - `page_view` entra na fila do `dataLayer` mesmo se o GTM ainda estiver baixando. Use **o evento personalizado `page_view`** como gatilho das tags de visualização, não o gatilho "Page View" nativo (`gtm.js`), que dispara antes de `page_id`, `lp_origem` e UTMs existirem.
 - LP desligada (404) não conta `page_view` e `/api/lead` recusa lead dela.

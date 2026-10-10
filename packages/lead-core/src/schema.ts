@@ -78,8 +78,7 @@ export function fieldErrors(error: z.ZodError): Record<string, string> {
 }
 
 // ============================================================
-// LP de e-commerce (/lp-ecom): 5 perguntas, sem nicho. O WhatsApp é pedido duas
-// vezes no navegador (confirmação); o servidor não recebe a confirmação.
+// LP de e-commerce (/lp-ecom): 5 perguntas, sem nicho, um campo de WhatsApp.
 // O "Perfil" (Dentro/Fora) NUNCA vem do navegador: o servidor calcula a partir do faturamento.
 // ============================================================
 
@@ -89,7 +88,7 @@ export interface EcomSchemaConfig {
   investimentos: readonly [string, ...string[]];
 }
 
-/** Email com domínio de verdade: algo@dominio.tld (z.email já exige ponto e TLD; aqui barra espaços e domínio com hífen nas pontas). */
+/** Email com domínio de verdade: algo@dominio.tld (z.email já exige ponto e TLD; aqui barra espaços e domínio com hífen nas pontas). Não exige email corporativo. */
 const emailComDominio = (v: string) =>
   z.email().safeParse(v).success && /^[^@\s]+@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i.test(v);
 
@@ -117,26 +116,9 @@ export function createEcomLeadSchema(cfg: EcomSchemaConfig) {
   });
 }
 
+/** Formulário no navegador: os mesmos campos do servidor (um campo de WhatsApp só, sem confirmação). */
 export function createEcomFormSchema(cfg: EcomSchemaConfig) {
-  return z
-    .object({
-      ...ecomFields(cfg),
-      whatsappConfirm: z.string().min(1, "Repita o seu WhatsApp."),
-    })
-    .refine(
-      (v) => {
-        const a = normalizeBrPhone(v.whatsapp ?? "");
-        const b = normalizeBrPhone(v.whatsappConfirm ?? "");
-        // Só compara quando os dois são números válidos: campo vazio ou inválido já tem erro próprio.
-        return !(v.whatsappConfirm && a && b && a !== b) && !(v.whatsappConfirm && a && !b);
-      },
-      {
-        path: ["whatsappConfirm"],
-        error: "Os números não conferem. Digite o mesmo WhatsApp.",
-        // Roda mesmo com erro em outros campos: a pessoa vê todos os problemas de uma vez.
-        when: () => true,
-      },
-    );
+  return z.object(ecomFields(cfg));
 }
 
 export type EcomLeadInput = z.infer<ReturnType<typeof createEcomLeadSchema>>;

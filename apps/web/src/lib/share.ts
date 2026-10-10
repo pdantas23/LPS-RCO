@@ -10,9 +10,12 @@ export const OG_IMAGE_ECOM = "/og/ecom.png";
 const ALT = "RCO Hub";
 
 /** Metadata completa (título, descrição, Open Graph e Twitter) de uma LP. openGraph de página substitui o do layout por inteiro, por isso tudo aqui. */
-export function shareMetadata(opts: { title: string; description: string; path: string; image: string; alt?: string }): Metadata {
+export function shareMetadata(opts: { title: string; description: string; path: string; image: string; alt?: string; ogTitle?: string; ogDescription?: string }): Metadata {
   const { title, description, path, image } = opts;
-  const alt = opts.alt ?? title;
+  const alt = opts.alt ?? opts.ogTitle ?? title;
+  // Título e descrição da prévia (WhatsApp, redes) podem ser diferentes dos da aba e do buscador.
+  const ogTitle = opts.ogTitle ?? title;
+  const ogDescription = opts.ogDescription ?? description;
   return {
     title,
     description,
@@ -20,11 +23,11 @@ export function shareMetadata(opts: { title: string; description: string; path: 
       type: "website",
       siteName: ALT,
       locale: "pt_BR",
-      title,
-      description,
+      title: ogTitle,
+      description: ogDescription,
       url: path,
       images: [{ url: image, width: 1200, height: 630, type: "image/png", alt }],
     },
-    twitter: { card: "summary_large_image", title, description, images: [{ url: image, alt }] },
+    twitter: { card: "summary_large_image", title: ogTitle, description: ogDescription, images: [{ url: image, alt }] },
   };
 }

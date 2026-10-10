@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 // um acordeão exclusivo).
 // ============================================================
 
-export function Faq({ items, page }: { items: PageConfig["faq"]; page: PageId }) {
+export function Faq({ items, page, eyebrow, title = "Perguntas frequentes" }: { items: PageConfig["faq"]; page: PageId; eyebrow?: string; title?: string }) {
   const [openIndexes, setOpenIndexes] = useState<Set<number>>(new Set());
 
   const toggle = (index: number) => {
@@ -33,7 +33,8 @@ export function Faq({ items, page }: { items: PageConfig["faq"]; page: PageId })
 
   return (
     <section className="mx-auto max-w-3xl px-5 pb-12 sm:pb-20">
-      <h2 className="mb-6 text-center text-2xl font-bold">Perguntas frequentes</h2>
+      {eyebrow ? <p className="mb-3 text-center text-sm font-semibold tracking-wide text-brand uppercase">{eyebrow}</p> : null}
+      <h2 className="mb-6 text-center text-2xl font-bold">{title}</h2>
       <div className="divide-y divide-line rounded-2xl border border-line bg-surface">
         {items.map((f, index) => {
           const open = openIndexes.has(index);

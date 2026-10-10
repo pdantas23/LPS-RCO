@@ -26,32 +26,18 @@ export const FATURAMENTOS = [
 ] as const;
 
 // ============================================================
-// /lp-ecom: as duas perguntas de faixa e a regra do perfil. Lugar único:
-// o formulário, o servidor (que calcula o Perfil) e os testes leem daqui.
-// A PRIMEIRA faixa de faturamento é a única que vira Perfil "Fora".
+// /lp-ecom: as faixas vivem em content/ecom.ts (junto do resto da copy). Aqui fica a regra do perfil.
+// "Fora" SOMENTE para a primeira faixa de faturamento ("Até R$ 29.999"); todas as outras, inclusive
+// "Prefiro conversar sobre isso", são "Dentro". O lead é enviado do mesmo jeito; o Perfil vai ao COMERCIAL
+// como etiqueta e nunca aparece para a pessoa.
 // ============================================================
 
-export const FATURAMENTOS_ECOM = [
-  "Abaixo de R$ 30 mil",
-  "R$ 30 mil a 50 mil",
-  "R$ 50 mil a 100 mil",
-  "R$ 100 mil a 300 mil",
-  "R$ 300 mil a 1 milhão",
-  "Acima de R$ 1 milhão",
-] as const;
+import { FATURAMENTOS_ECOM } from "./ecom";
 
-export const INVESTIMENTOS_ECOM = [
-  "Até R$ 2 mil",
-  "R$ 2 mil a 5 mil",
-  "R$ 5 mil a 10 mil",
-  "R$ 10 mil a 30 mil",
-  "Acima de R$ 30 mil",
-  "Ainda não invisto",
-] as const;
+export { FATURAMENTOS_ECOM, INVESTIMENTOS_ECOM } from "./ecom";
 
 export type PerfilEcom = "Dentro" | "Fora";
 
-/** Abaixo de R$ 30 mil = Fora (o lead é enviado do mesmo jeito); de R$ 30 mil para cima = Dentro. */
 export function perfilEcom(faturamento: string): PerfilEcom {
   return faturamento === FATURAMENTOS_ECOM[0] ? "Fora" : "Dentro";
 }

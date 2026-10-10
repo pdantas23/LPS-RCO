@@ -41,41 +41,33 @@ describe("rotas das LPs", () => {
 });
 
 describe("/lp-ecom: faixas e perfil", () => {
-  it("só a primeira faixa de faturamento é Fora; as listas têm as faixas combinadas", async () => {
+  it("só 'Até R$ 29.999' é Fora; 'Prefiro conversar sobre isso' e as demais são Dentro", async () => {
     const { FATURAMENTOS_ECOM, INVESTIMENTOS_ECOM, perfilEcom } = await import("./options");
-    expect(FATURAMENTOS_ECOM[0]).toBe("Abaixo de R$ 30 mil");
-    expect(FATURAMENTOS_ECOM).toHaveLength(6);
-    expect(INVESTIMENTOS_ECOM).toHaveLength(6);
-    expect(FATURAMENTOS_ECOM.map(perfilEcom)).toEqual(["Fora", "Dentro", "Dentro", "Dentro", "Dentro", "Dentro"]);
+    expect(FATURAMENTOS_ECOM[0]).toBe("Até R$ 29.999");
+    expect(FATURAMENTOS_ECOM).toHaveLength(10);
+    expect(INVESTIMENTOS_ECOM).toHaveLength(9);
+    expect(FATURAMENTOS_ECOM.map(perfilEcom)).toEqual(["Fora", ...Array(9).fill("Dentro")]);
+    expect(perfilEcom("Prefiro conversar sobre isso")).toBe("Dentro");
   });
 });
 
-describe("/lp-ecom: fotos das dores", () => {
-  it("cada dor tem foto local em public/ecom, abaixo de 150 KB, e há créditos", async () => {
+describe("/lp-ecom: sem sobras das versões anteriores", () => {
+  it("fotos, carrossel e placeholders de prova não estão mais na página", async () => {
     const fs = await import("node:fs");
     const path = await import("node:path");
-    const { ECOM_PAINS } = await import("./ecom");
-    const pub = path.resolve(__dirname, "../../public");
-    expect(ECOM_PAINS.items).toHaveLength(5);
-    for (const p of ECOM_PAINS.items) {
-      expect(p.image.startsWith("/ecom/"), p.image).toBe(true);
-      expect(fs.statSync(path.join(pub, p.image)).size, p.image).toBeLessThan(150 * 1024);
-    }
-    expect(fs.existsSync(path.join(pub, "ecom/CREDITOS.md"))).toBe(true);
+    const comp = path.resolve(__dirname, "../components");
+    const page = fs.readFileSync(path.join(comp, "LandingPageEcom.tsx"), "utf8");
+    expect(page).not.toContain("Gallery4");
+    expect(page).not.toContain("TestimonialsMarquee");
+    expect(page).not.toContain("PROOF_PLACEHOLDERS");
+    expect(fs.existsSync(path.resolve(__dirname, "../../public/ecom"))).toBe(false);
   });
-});
 
-describe("/lp-ecom: carrossel das dores", () => {
-  it("botão único abaixo (cta_location dores), sem link nos cards, sem corte de texto e sem bolinhas", async () => {
-    const fs = await import("node:fs");
-    const path = await import("node:path");
-    const dir = path.resolve(__dirname, "../components");
-    const pains = fs.readFileSync(path.join(dir, "EcomPains.tsx"), "utf8");
-    const gallery = fs.readFileSync(path.join(dir, "ui/gallery4.tsx"), "utf8");
-    expect(pains).toContain('location="dores"');
-    expect(gallery).not.toContain("line-clamp");
-    expect(gallery).not.toContain("<a ");
-    expect(gallery).not.toContain("Ir para o card");
-    expect(gallery).toContain("Próximo card");
+  it("a seção de provas fica escondida e sem cases", async () => {
+    const { SHOW_PROOF_SECTION, PROOF_CASES, PRIVACY_URL, CONTACT_URL } = await import("./ecom");
+    expect(SHOW_PROOF_SECTION).toBe(false);
+    expect(PROOF_CASES).toHaveLength(0);
+    // sem URL real, política e contato não aparecem
+    expect([PRIVACY_URL, CONTACT_URL]).toEqual(["", ""]);
   });
 });

@@ -33,13 +33,15 @@ export function Benefits() {
   );
 }
 
-export function Steps({ steps, icons }: { steps: PageConfig["steps"]; icons?: readonly (LucideIcon | null)[] }) {
+export function Steps({ steps, icons, eyebrow }: { steps: PageConfig["steps"]; icons?: readonly (LucideIcon | null)[]; eyebrow?: string }) {
   const { heading, subtitle, items } = steps;
   if (items.length === 0) return null;
   return (
     <section className="mx-auto max-w-3xl px-5 pb-10 sm:pb-16">
+      {eyebrow ? <p className="mb-3 text-center text-sm font-semibold tracking-wide text-brand uppercase">{eyebrow}</p> : null}
       <h2 className="mb-3 text-center text-2xl font-bold">{heading}</h2>
-      <p className="mx-auto mb-10 max-w-xl text-center text-mute">{subtitle}</p>
+      {subtitle ? <p className="mx-auto max-w-xl text-center text-mute">{subtitle}</p> : null}
+      <div className="mb-10" />
 
       <ol>
         {items.map((s, i) => {

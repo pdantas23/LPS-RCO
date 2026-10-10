@@ -34,9 +34,12 @@ export async function submitLead(args: {
   page: PageId;
   tracking: Tracking;
   fetchFn?: typeof fetch;
+  /** Textos de erro próprios da página (a /lp-ecom tem os dela); sem isto, valem os padrões. */
+  messages?: Partial<Record<"rate_limit" | "server" | "network", string>>;
 }): Promise<SubmitOutcome> {
   const { values, respondentId, page, tracking } = args;
   const doFetch = args.fetchFn ?? fetch;
+  const msg = args.messages ?? {};
   try {
     const res = await doFetch("/api/lead", {
       method: "POST",
@@ -62,12 +65,12 @@ export async function submitLead(args: {
     }
     if (res.status === 429) {
       track("form_error", { page_id: page, error_type: "rate_limit" });
-      return { kind: "error", message: "Muitas tentativas. Aguarde alguns minutos e tente de novo." };
+      return { kind: "error", message: msg.rate_limit ?? "Muitas tentativas. Aguarde alguns minutos e tente de novo." };
     }
     track("form_error", { page_id: page, error_type: "server" });
-    return { kind: "error", message: "Não foi possível enviar agora. Tente novamente em instantes." };
+    return { kind: "error", message: msg.server ?? "Não foi possível enviar agora. Tente novamente em instantes." };
   } catch {
     track("form_error", { page_id: page, error_type: "network" });
-    return { kind: "error", message: "Sem conexão. Verifique sua internet e tente novamente." };
+    return { kind: "error", message: msg.network ?? "Sem conexão. Verifique sua internet e tente novamente." };
   }
 }

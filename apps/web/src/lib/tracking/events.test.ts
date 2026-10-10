@@ -123,7 +123,7 @@ describe("form_error", () => {
 describe("generate_lead da /lp-ecom", () => {
   it("mesmo evento das outras LPs, sem nicho e sem perfil (a conversão não é filtrada no GTM)", async () => {
     const out = await submitLead({
-      values: { name: "Maria da Silva", whatsapp: "(11) 98888-7777", email: "m@loja.com.br", faturamento: "Abaixo de R$ 30 mil", investimento: "Ainda não invisto" },
+      values: { name: "Maria da Silva", whatsapp: "(11) 98888-7777", email: "m@loja.com.br", faturamento: "Até R$ 29.999", investimento: "Ainda não tenho verba definida" },
       respondentId: ID,
       page: "ECOM",
       tracking: {},
@@ -131,7 +131,7 @@ describe("generate_lead da /lp-ecom", () => {
     });
     expect(out.kind).toBe("done");
     expect(dataLayer).toEqual([
-      { event: "generate_lead", lp_origem: "lp-ecom", page_id: "ECOM", faturamento: "Abaixo de R$ 30 mil", event_id: ID },
+      { event: "generate_lead", lp_origem: "lp-ecom", page_id: "ECOM", faturamento: "Até R$ 29.999", event_id: ID },
     ]);
     expect(JSON.stringify(dataLayer)).not.toMatch(/Maria|98888|loja\.com/);
   });

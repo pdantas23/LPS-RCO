@@ -269,8 +269,8 @@ describe("POST /api/lead — /lp-ecom (ECOM)", () => {
     name: "Maria Souza",
     whatsapp: "(11) 99999-8888",
     email: "maria@sualoja.com.br",
-    faturamento: "R$ 50 mil a 100 mil",
-    investimento: "R$ 2 mil a 5 mil",
+    faturamento: "De R$ 50.000 a R$ 79.999",
+    investimento: "De R$ 2.000 a R$ 4.999",
     website: "",
     tracking: { utm_source: "meta", fbclid: "abc", gclid: "g1", ignorado: "x" },
     ...over,
@@ -287,8 +287,8 @@ describe("POST /api/lead — /lp-ecom (ECOM)", () => {
       Nome: "Maria Souza",
       WhatsApp: "5511999998888",
       Email: "maria@sualoja.com.br",
-      Faturamento: "R$ 50 mil a 100 mil",
-      "Investimento em anúncio": "R$ 2 mil a 5 mil",
+      Faturamento: "De R$ 50.000 a R$ 79.999",
+      "Investimento em anúncio": "De R$ 2.000 a R$ 4.999",
       Perfil: "Dentro",
       utm_source: "meta",
       gclid: "g1",
@@ -296,17 +296,23 @@ describe("POST /api/lead — /lp-ecom (ECOM)", () => {
     });
   });
 
-  it("Abaixo de R$ 30 mil ENVIA normalmente, com Perfil Fora", async () => {
-    const b = ecom({ faturamento: "Abaixo de R$ 30 mil" });
+  it("Até R$ 29.999 ENVIA normalmente, com Perfil Fora", async () => {
+    const b = ecom({ faturamento: "Até R$ 29.999" });
     const res = await handleLeadRequest(post(b), deps());
     expect(res.status).toBe(200);
     expect(outbox.get(b.respondentId as string)!.payload.respondent.answers.Perfil).toBe("Fora");
   });
 
   it("o Perfil nunca vem do navegador (campo enviado é ignorado)", async () => {
-    const b = ecom({ faturamento: "Abaixo de R$ 30 mil", Perfil: "Dentro", perfil: "Dentro" });
+    const b = ecom({ faturamento: "Até R$ 29.999", Perfil: "Dentro", perfil: "Dentro" });
     await handleLeadRequest(post(b), deps());
     expect(outbox.get(b.respondentId as string)!.payload.respondent.answers.Perfil).toBe("Fora");
+  });
+
+  it("'Prefiro conversar sobre isso' é Dentro", async () => {
+    const b = ecom({ faturamento: "Prefiro conversar sobre isso" });
+    expect((await handleLeadRequest(post(b), deps())).status).toBe(200);
+    expect(outbox.get(b.respondentId as string)!.payload.respondent.answers.Perfil).toBe("Dentro");
   });
 
   it("422 sem investimento, com faixa inventada ou email sem domínio; nada gravado", async () => {

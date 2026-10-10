@@ -220,7 +220,7 @@ export function Field({ id, label, error, children }: { id: string; label: strin
       </label>
       {children}
       {error ? (
-        <p role="alert" className="mt-1.5 text-sm text-danger">
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-danger">
           {error}
         </p>
       ) : null}

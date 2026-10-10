@@ -105,40 +105,25 @@ describe("createLeadFormSchema (formulário do browser)", () => {
 });
 
 describe("schemas da /lp-ecom", () => {
-  const cfg = { page: "ECOM", faturamentos: ["Abaixo de R$ 30 mil", "R$ 30 mil a 50 mil"], investimentos: ["Até R$ 2 mil", "Ainda não invisto"] } as const;
+  const cfg = { page: "ECOM", faturamentos: ["Até R$ 29.999", "De R$ 30.000 a R$ 49.999"], investimentos: ["Ainda não tenho verba definida", "Até R$ 1.999"] } as const;
   const form = createEcomFormSchema(cfg);
-  const ok = { name: "Maria", whatsapp: "(11) 99999-8888", whatsappConfirm: "11999998888", email: "m@loja.com.br", faturamento: "R$ 30 mil a 50 mil", investimento: "Até R$ 2 mil" };
+  const ok = { name: "José da Conceição Ávila", whatsapp: "(11) 99999-8888", email: "m@gmail.com", faturamento: "De R$ 30.000 a R$ 49.999", investimento: "Até R$ 1.999" };
 
-  it("aceita; a confirmação vale mesmo com formatação diferente", () => {
+  it("aceita nome composto com acento e email não corporativo", () => {
     expect(form.safeParse(ok).success).toBe(true);
   });
-  it("confirmação diferente: erro no campo whatsappConfirm", () => {
-    const r = form.safeParse({ ...ok, whatsappConfirm: "(11) 99999-8887" });
-    expect(r.success).toBe(false);
-    if (!r.success) expect(fieldErrors(r.error).whatsappConfirm).toMatch(/conferem/);
+  it("não pede confirmação de WhatsApp", () => {
+    expect("whatsappConfirm" in (form.safeParse(ok) as { data: object }).data).toBe(false);
   });
-  it("o erro de confirmação aparece junto com erros de outros campos", () => {
-    const r = form.safeParse({ ...ok, email: "x", whatsappConfirm: "(11) 99999-8887" });
-    expect(r.success).toBe(false);
-    if (!r.success) {
-      const e = fieldErrors(r.error);
-      expect(e.email).toBeTruthy();
-      expect(e.whatsappConfirm).toMatch(/conferem/);
-    }
-  });
-  it("confirmação vazia: pede para repetir", () => {
-    const r = form.safeParse({ ...ok, whatsappConfirm: "" });
-    expect(r.success).toBe(false);
-    if (!r.success) expect(fieldErrors(r.error).whatsappConfirm).toMatch(/Repita/);
+  it.each(["(00) 99999-8888", "(10) 99999-8888", "123"])("WhatsApp inválido (DDD ou tamanho): %s", (whatsapp) => {
+    expect(form.safeParse({ ...ok, whatsapp }).success).toBe(false);
   });
   it.each(["maria", "maria@loja", "maria@loja.", "@loja.com", "maria loja@x.com", "maria@-loja.com"])("email inválido: %s", (email) => {
     expect(form.safeParse({ ...ok, email }).success).toBe(false);
   });
   it("servidor: página tem de ser ECOM e faixas têm de estar na lista", () => {
     const srv = createEcomLeadSchema(cfg);
-    const { whatsappConfirm: _c, ...rest } = ok;
-    void _c;
-    const base = { ...rest, respondentId: "5f0c2a4e-9d1b-4c53-8a77-2b6f0d1e9a10", page: "ECOM" };
+    const base = { ...ok, respondentId: "5f0c2a4e-9d1b-4c53-8a77-2b6f0d1e9a10", page: "ECOM" };
     expect(srv.safeParse(base).success).toBe(true);
     expect(srv.safeParse({ ...base, page: "P04" }).success).toBe(false);
     expect(srv.safeParse({ ...base, investimento: "x" }).success).toBe(false);

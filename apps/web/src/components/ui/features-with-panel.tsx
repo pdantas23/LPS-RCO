@@ -50,7 +50,7 @@ function FeatureMedia({ content, alt }: { content: string | React.ReactNode; alt
   );
 }
 
-export function FeaturesWithPanel({ heading, items }: { heading: string; items: FeatureItem[] }) {
+export function FeaturesWithPanel({ heading, items }: { heading?: string; items: FeatureItem[] }) {
   const [active, setActive] = React.useState(0);
   const activeItem = items[active];
   if (!activeItem) return null;
@@ -59,7 +59,7 @@ export function FeaturesWithPanel({ heading, items }: { heading: string; items: 
     <section className="mx-auto max-w-6xl px-5 py-10 sm:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 lg:items-start lg:gap-16">
         <div>
-          <h2 className="mb-8 text-2xl font-bold lg:mb-10">{heading}</h2>
+          {heading ? <h2 className="mb-8 text-2xl font-bold lg:mb-10">{heading}</h2> : null}
 
           <ul className="flex flex-col gap-1">
             {items.map((item, index) => (
