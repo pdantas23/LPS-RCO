@@ -2,8 +2,8 @@ import { useId } from "react";
 
 // Link do Instagram da RCO Hub, primeiro item do rodapé de todas as LPs do app Next (/lp01, /lp02, /lp-ecom).
 // Um componente só: troque a URL ou o @ aqui e vale em todas. Ícone do Instagram em contorno, com o traço no gradiente
-// do Instagram (amarelo/laranja embaixo à esquerda, rosa, roxo em cima à direita), mais "@rcohub" na cor do rodapé; SVG inline, sem imagem externa. Hover igual ao dos outros links do rodapé
-// (sublinhado e text-ink). Sem evento de dataLayer: os links do rodapé não rastreiam clique.
+// do Instagram (amarelo/laranja embaixo à esquerda, rosa, roxo em cima à direita), mais "@rcohub" na cor do rodapé; SVG inline, sem imagem externa. Sem sublinhado (nem parado nem no hover);
+// o hover só muda a cor do texto (text-ink) e o foco do teclado mostra um outline. Sem evento de dataLayer: os links do rodapé não rastreiam clique.
 
 export const INSTAGRAM_URL = "https://www.instagram.com/rcohub/";
 export const INSTAGRAM_HANDLE = "@rcohub";
@@ -33,7 +33,7 @@ export function InstagramLink() {
         <circle cx="12" cy="12" r="4" />
         <circle cx="17.5" cy="6.5" r="0.7" fill={`url(#${gradId})`} />
       </svg>
-      <span className="underline underline-offset-2">{INSTAGRAM_HANDLE}</span>
+      <span>{INSTAGRAM_HANDLE}</span>
     </a>
   );
 }
