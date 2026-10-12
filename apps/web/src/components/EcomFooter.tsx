@@ -1,4 +1,5 @@
 import { CONTACT_URL, ECOM_FOOTER, PRIVACY_URL } from "@/content/ecom";
+import { InstagramLink } from "./InstagramLink";
 
 /** Rodapé da /lp-ecom. Política de Privacidade e Contato comercial só aparecem quando houver URL real (content/ecom.ts). */
 export function EcomFooter() {
@@ -8,6 +9,7 @@ export function EcomFooter() {
   return (
     <footer className="border-t border-line/60">
       <div className="mx-auto max-w-6xl px-5 py-8 text-center text-sm text-mute">
+        <InstagramLink />
         <p>{ECOM_FOOTER.tagline}</p>
         {links.length ? (
           <p className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">

@@ -1,6 +1,7 @@
 import { CircleDot, ClipboardList, Rocket, type LucideIcon } from "lucide-react";
 import type { PageConfig } from "@/content/pages";
 import { HeroCta } from "./HeroCta";
+import { InstagramLink } from "./InstagramLink";
 import { IncludedFlow } from "./IncludedFlow";
 import { BRAND_ICONS, BrandIcon } from "./icons/brand-icons";
 import { TestimonialsMarquee } from "./TestimonialsMarquee";
@@ -116,6 +117,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-line/60">
       <div className="mx-auto max-w-6xl px-5 py-4 text-center text-sm text-mute sm:py-6">
+        <InstagramLink />
         © RCO Hub. Todos os direitos reservados.
       </div>
     </footer>

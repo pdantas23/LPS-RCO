@@ -87,3 +87,18 @@ describe("/lp-ecom: código sem sobras e cartões de tamanho igual", () => {
     expect((src.match(/auto-rows-fr/g) ?? []).length).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe("rodapé: Instagram como primeiro item nas três LPs do Next", () => {
+  it("um componente só (InstagramLink), com URL limpa, nova aba e aria-label; usado pelos dois rodapés", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.resolve(__dirname, "../components");
+    const ig = fs.readFileSync(path.join(dir, "InstagramLink.tsx"), "utf8");
+    expect(ig).toContain('"https://www.instagram.com/rcohub/"');
+    expect(ig).not.toContain("utm_source");
+    expect(ig).toContain('target="_blank"');
+    expect(ig).toContain('rel="noopener noreferrer"');
+    expect(ig).toContain('aria-label="Instagram da RCO Hub"');
+    for (const f of ["sections.tsx", "EcomFooter.tsx"]) expect(fs.readFileSync(path.join(dir, f), "utf8"), f).toContain("<InstagramLink />");
+  });
+});
