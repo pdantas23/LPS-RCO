@@ -34,7 +34,7 @@ export interface IconCardItem {
  */
 export function IconCards({ items, columns = 3, quote = false }: { items: readonly IconCardItem[]; columns?: 2 | 3; quote?: boolean }) {
   return (
-    <ul className={cn("grid gap-4 sm:gap-5", columns === 3 ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2")}>
+    <ul className={cn("grid auto-rows-fr gap-4 sm:gap-5", columns === 3 ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2")}>
       {items.map((item) => (
         <li key={item.title} className="rounded-2xl border border-line bg-surface p-6">
           <IconBox name={item.icon} />
@@ -51,11 +51,13 @@ export function IconCards({ items, columns = 3, quote = false }: { items: readon
  * Rótulos em HTML, sem percentuais nem números de exemplo.
  */
 export function PurchaseFlow({ steps }: { steps: readonly IconCardItem[] }) {
+  // Grade de colunas IGUAIS (minmax(0,1fr)) e linhas de mesma altura (auto-rows-fr): os 5 cartões têm a mesma largura
+  // e a mesma altura. As setas ficam fora dos cartões, absolutas no vão entre eles (não entram no cálculo da largura).
   return (
-    <ol className="flex flex-col items-stretch gap-3 lg:flex-row lg:gap-0">
+    <ol className="grid auto-rows-fr grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-5">
       {steps.map((s, i) => (
-        <li key={s.title} className="flex flex-col items-stretch lg:flex-1 lg:flex-row lg:items-start">
-          <div className="flex-1 rounded-2xl border border-line bg-surface p-5 text-center lg:mx-0">
+        <li key={s.title} className="relative">
+          <div className="h-full rounded-2xl border border-line bg-surface p-5 text-center">
             <div className="mx-auto grid size-12 place-items-center rounded-full border border-line bg-bg text-brand">
               <EcomIcon name={s.icon} />
             </div>
@@ -63,7 +65,10 @@ export function PurchaseFlow({ steps }: { steps: readonly IconCardItem[] }) {
             <p className="mt-1.5 text-sm text-mute">{s.text}</p>
           </div>
           {i < steps.length - 1 ? (
-            <div aria-hidden="true" className="grid place-items-center text-brand lg:w-10 lg:shrink-0 lg:self-center">
+            <div
+              aria-hidden="true"
+              className="absolute -bottom-10 left-1/2 grid h-10 w-10 -translate-x-1/2 place-items-center text-brand lg:top-1/2 lg:right-[-2.5rem] lg:bottom-auto lg:left-auto lg:h-10 lg:-translate-x-0 lg:-translate-y-1/2"
+            >
               <svg viewBox="0 0 24 24" className="size-6 rotate-90 fill-none stroke-current lg:rotate-0" strokeWidth="1.75">
                 <path d="M4 12h15m-5-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -112,9 +117,9 @@ function DropshipArt() {
 export function TwoModels({ items }: { items: readonly IconCardItem[] }) {
   const arts = [<StockArt key="a" />, <DropshipArt key="b" />];
   return (
-    <div className="grid gap-5 md:grid-cols-2">
+    <div className="grid auto-rows-fr gap-5 md:grid-cols-2">
       {items.map((m, i) => (
-        <div key={m.title} className="flex flex-col rounded-2xl border border-line bg-surface p-6 sm:p-8">
+        <div key={m.title} className="flex h-full flex-col rounded-2xl border border-line bg-surface p-6 sm:p-8">
           <div className="flex items-center gap-4">
             <IconBox name={m.icon} />
             <h3 className="text-xl font-bold">{m.title}</h3>

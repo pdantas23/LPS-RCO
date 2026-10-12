@@ -71,3 +71,19 @@ describe("/lp-ecom: sem sobras das versões anteriores", () => {
     expect([PRIVACY_URL, CONTACT_URL]).toEqual(["", ""]);
   });
 });
+
+describe("/lp-ecom: código sem sobras e cartões de tamanho igual", () => {
+  it("Gallery4, carrossel e botão shadcn foram removidos (nada os importa)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const ui = path.resolve(__dirname, "../components/ui");
+    for (const f of ["gallery4.tsx", "carousel.tsx", "button.tsx"]) expect(fs.existsSync(path.join(ui, f)), f).toBe(false);
+  });
+
+  it("as grades de cartões usam colunas iguais e linhas de mesma altura (auto-rows-fr)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const src = fs.readFileSync(path.resolve(__dirname, "../components/EcomSections.tsx"), "utf8");
+    expect((src.match(/auto-rows-fr/g) ?? []).length).toBeGreaterThanOrEqual(3);
+  });
+});
