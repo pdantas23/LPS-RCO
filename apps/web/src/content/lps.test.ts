@@ -99,6 +99,8 @@ describe("rodapé: Instagram como primeiro item nas três LPs do Next", () => {
     expect(ig).toContain('target="_blank"');
     expect(ig).toContain('rel="noopener noreferrer"');
     expect(ig).toContain('aria-label="Instagram da RCO Hub"');
+    expect(ig).toContain('"@rcohub"');
+    expect(ig).not.toContain("radialGradient");
     for (const f of ["sections.tsx", "EcomFooter.tsx"]) expect(fs.readFileSync(path.join(dir, f), "utf8"), f).toContain("<InstagramLink />");
   });
 });
