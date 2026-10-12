@@ -41,14 +41,16 @@ export function LandingPageEcom() {
         {/* ---------- 03 Hero: texto à esquerda, formulário à direita (no celular: texto, botão, formulário) ---------- */}
         <section className="relative overflow-hidden px-5 pt-6 pb-14 sm:pt-10 sm:pb-20">
           <EcomHeroGraphic />
-          <div className="relative mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-            <div>
+          <div className="relative mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
+            {/* Abaixo de md (celular): tudo centralizado. Do md para cima: alinhado à esquerda, como antes. */}
+            <div className="text-center md:text-left">
               <p className="mb-3 text-sm font-semibold tracking-wide text-brand uppercase">{ECOM_HERO.eyebrow}</p>
               <h1 className="text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl">{ECOM_HERO.title}</h1>
-              <p className="mt-5 max-w-xl text-lg text-mute">{ECOM_HERO.subtitle}</p>
-              <ul className="mt-7 flex flex-col gap-3">
+              <p className="mx-auto mt-5 max-w-xl text-lg text-mute md:mx-0">{ECOM_HERO.subtitle}</p>
+              {/* Celular: o bloco fica centralizado na largura, mas os itens se alinham entre si à esquerda (ícones na mesma coluna). */}
+              <ul className="mx-auto mt-7 flex w-fit max-w-full flex-col gap-3 md:mx-0 md:w-auto">
                 {ECOM_HERO.supports.map((s) => (
-                  <li key={s.text} className="flex items-center gap-3">
+                  <li key={s.text} className="flex items-center gap-3 text-left">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-bg text-brand">
                       <EcomIcon name={s.icon} className="size-5" />
                     </span>
@@ -57,10 +59,10 @@ export function LandingPageEcom() {
                 ))}
               </ul>
               {/* O botão só existe onde o formulário fica abaixo (celular e tablet); no desktop ele está ao lado. */}
-              <div className="mt-8 lg:hidden">
+              <div className="mt-8 flex justify-center md:justify-start lg:hidden">
                 <HeroCta label={ECOM_HERO.cta} targetSelector={FORM} page={PAGE} location="hero" width={320} className="max-w-full text-sm sm:text-base" />
               </div>
-              <p className="mt-4 flex max-w-xl items-start gap-2 text-sm text-mute">
+              <p className="mt-4 hidden max-w-xl items-start gap-2 text-sm text-mute md:flex">
                 <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand" />
                 {ECOM_HERO.microtext}
               </p>
