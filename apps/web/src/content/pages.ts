@@ -99,18 +99,22 @@ const pains = {
     {
       icon: "clock",
       text: "Um lead chega pelo WhatsApp fora do horário comercial e demora até alguém responder, tempo suficiente para ele procurar outra opção.",
+      image: "/pains/clock.jpg",
     },
     {
       icon: "repeat",
       text: "O time comercial gasta tempo respondendo pergunta repetida em vez de falar só com quem já está pronto para comprar.",
+      image: "/pains/repeat.jpg",
     },
     {
       icon: "eye-off",
       text: "Você já tentou tráfego pago por conta própria ou com outra agência e não teve controle real sobre o que acontecia depois do clique.",
+      image: "/pains/eye-off.jpg",
     },
     {
       icon: "lost-history",
       text: "Cada atendente guarda as conversas do seu jeito, e quando alguém sai do time, o histórico do cliente some junto.",
+      image: "/pains/lost-history.jpg",
     },
   ] satisfies PainItem[],
 };
