@@ -5,8 +5,8 @@ import {
 } from "@/content/ecom";
 import { EcomFooter } from "./EcomFooter";
 import { EcomHeader } from "./EcomHeader";
-import { EcomHeroGraphic } from "./EcomHeroGraphic";
-import { EcomHeroVideo } from "./EcomHeroVideo";
+import { EcomHeroHeadlines } from "./EcomHeroHeadlines";
+import { EcomHeroStory } from "./EcomHeroStory";
 import { EcomIcon, iconOf } from "./EcomIcon";
 import { EcomLeadForm } from "./EcomLeadForm";
 import { IconCards, SectionHead, TwoModels } from "./EcomSections";
@@ -16,6 +16,7 @@ import { Steps } from "./sections";
 import { DarkGradientLayers } from "./ui/dark-gradient-bg";
 import { FeaturesWithPanel } from "./ui/features-with-panel";
 import { MilestoneTimeline } from "./ui/feature-24-milestone-timeline";
+import { PhoneJourney } from "./ui/phone-journey";
 
 const PAGE = "ECOM";
 const FORM = `#${ECOM_ANCHORS.form}`;
@@ -26,7 +27,7 @@ const SECTION = `${WRAP} py-12 sm:py-16`;
  * /lp-ecom, versão final do documento (09/10/2026), sobre UM fundo contínuo (o do hero, como na P05).
  * Texto em content/ecom.ts. Um formulário só, no hero; todos os CTAs rolam até ele (#formulario).
  *
- * Seção → componente: menu EcomHeader | 03 hero (EcomHeroVideo + EcomLeadForm; EcomHeroGraphic só abaixo de lg) | 04 IconCards |
+ * Seção → componente: menu EcomHeader | 03 hero (EcomHeroStory: fundo animado + EcomHeroHeadlines + PhoneJourney + EcomLeadForm) | 04 IconCards |
  * 05 MilestoneTimeline (Feature24) | 06 FeaturesWithPanel (da P05) | 07 IconCards quote | 08 TwoModels | 09 IconCards |
  * 10 Steps (da P05/P04) | 11 provas (escondida, SHOW_PROOF_SECTION) | 13 Steps | 14 Faq (das outras LPs) |
  * 15 fechamento + EcomFooter. Sem banner de cookies, sem pop-up, sem CTA fixo.
@@ -41,23 +42,26 @@ export function LandingPageEcom() {
         <EcomHeader page={PAGE} />
 
         {/* ---------- 03 Hero ----------
-            xl+ (1280 ou mais): rótulo, título e subtítulo centralizados no topo; vídeo à esquerda e formulário à direita
-            (mesma altura); os 3 apoios em linha logo abaixo. lg (1024 a 1279): texto e apoios à esquerda, formulário à
-            direita, sem vídeo (como antes). Abaixo de lg (celular e tablet): como antes (texto, apoios, botão, formulário).
-            Uma grade só, reordenada por áreas. */}
-        <section className="relative overflow-hidden px-5 pt-6 pb-14 sm:pt-10 sm:pb-20">
-          <EcomHeroGraphic className="xl:hidden" />
-          <div className="relative mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] items-start gap-y-0 lg:grid-cols-[1.1fr_1fr] lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:[grid-template-areas:'head_form''apoios_form'] xl:max-w-7xl xl:grid-cols-[1.55fr_1fr] xl:grid-rows-[auto_auto_auto] xl:items-stretch xl:gap-x-10 xl:gap-y-10 xl:[grid-template-areas:'head_head''video_form''apoios_apoios']">
-            {/* Abaixo de md (celular): tudo centralizado. md a xl: alinhado à esquerda. xl+: centralizado. */}
-            <div className="text-center md:text-left lg:[grid-area:head] xl:text-center">
-              <p className="mb-3 text-sm font-semibold tracking-wide text-brand uppercase">{ECOM_HERO.eyebrow}</p>
-              <h1 className="text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl xl:mx-auto xl:max-w-4xl">{ECOM_HERO.title}</h1>
-              <p className="mx-auto mt-5 max-w-xl text-lg text-mute md:mx-0 xl:mx-auto xl:max-w-2xl">{ECOM_HERO.subtitle}</p>
+            O fundo animado cobre o hero inteiro (EcomHeroStory). No primeiro plano, três partes: as frases animadas, o celular
+            (PhoneJourney) e o formulário. xl (1280+): celular | frases | formulário lado a lado. Abaixo de xl: pilha
+            centralizada, nesta ordem: frases, celular, formulário. O h1 fica só no DOM (sr-only): as frases e o celular são
+            decorativos (aria-hidden). Os 3 apoios e o microtexto ficam abaixo, centralizados. */}
+        <EcomHeroStory className="px-5 pt-6 pb-14 sm:pt-10 sm:pb-20">
+          <div className="relative mx-auto max-w-6xl xl:max-w-7xl">
+            <h1 className="sr-only">{ECOM_HERO.title}</h1>
+            <p className="sr-only">
+              {ECOM_HERO.eyebrow}. {ECOM_HERO.subtitle}
+            </p>
+            <div className="grid grid-cols-[minmax(0,1fr)] justify-items-center gap-8 xl:grid-cols-[360px_minmax(0,1fr)_480px] xl:items-center xl:justify-items-stretch xl:gap-10">
+              <EcomHeroHeadlines className="w-full max-w-sm xl:order-2 xl:max-w-none" />
+              <PhoneJourney className="w-[min(72vw,calc(65svh*0.4878))] xl:order-1 xl:w-full" />
+              <div className="w-full xl:order-3">
+                <EcomLeadForm />
+              </div>
             </div>
 
-            <div className="mt-7 lg:[grid-area:apoios] xl:mt-0">
-              {/* Celular: o bloco fica centralizado na largura, mas os itens se alinham entre si à esquerda (ícones na mesma coluna). xl+: 3 itens em linha. */}
-              <ul className="mx-auto flex w-fit max-w-full flex-col gap-3 md:mx-0 md:w-auto xl:mx-auto xl:w-fit xl:flex-row xl:justify-center xl:gap-8">
+            <div className="mt-10">
+              <ul className="mx-auto flex w-fit max-w-full flex-col gap-3 xl:w-auto xl:flex-row xl:justify-center xl:gap-8">
                 {ECOM_HERO.supports.map((s) => (
                   <li key={s.text} className="flex items-center gap-3 text-left">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-bg text-brand">
@@ -67,26 +71,13 @@ export function LandingPageEcom() {
                   </li>
                 ))}
               </ul>
-              {/* O botão só existe onde o formulário fica abaixo (celular e tablet); do lg para cima o formulário está ao lado. */}
-              <div className="mt-8 flex justify-center md:justify-start lg:hidden">
-                <HeroCta label={ECOM_HERO.cta} targetSelector={FORM} page={PAGE} location="hero" width={320} className="max-w-full text-sm sm:text-base" />
-              </div>
-              <p className="mt-4 hidden max-w-xl items-start gap-2 text-sm text-mute md:flex xl:mx-auto xl:max-w-2xl xl:justify-center xl:text-center">
-                <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand xl:mt-1" />
+              <p className="mx-auto mt-4 hidden max-w-2xl items-start justify-center gap-2 text-center text-sm text-mute md:flex">
+                <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand" />
                 {ECOM_HERO.microtext}
               </p>
             </div>
-
-            {/* Moldura do vídeo (só xl+): mesma altura do formulário. O vídeo entra na primeira interação (EcomHeroVideo). */}
-            <div className="relative hidden overflow-hidden rounded-2xl border border-line bg-[linear-gradient(135deg,var(--surface),var(--bg))] xl:block xl:[grid-area:video]">
-              <EcomHeroVideo />
-            </div>
-
-            <div className="mt-10 lg:mt-0 lg:[grid-area:form]">
-              <EcomLeadForm />
-            </div>
           </div>
-        </section>
+        </EcomHeroStory>
 
         {/* ---------- 04 Dores ---------- */}
         <section className={SECTION}>

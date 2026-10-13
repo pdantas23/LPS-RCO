@@ -32,6 +32,24 @@ Regra do Perfil (interno, não exibido): "Fora" somente para a faixa "Até R$ 29
 - Quero analisar meu e-commerce
 - Preencha os dados da sua loja. Nosso time entra em contato para entender seu cenário e avaliar os próximos passos.
 
+## 03 Hero: frases animadas do celular
+
+- Seu
+- anúncio
+- leva a pessoa até a loja.
+- Ela vê o
+- produto
+- .
+- Coloca no
+- carrinho
+- .
+- E para no
+- checkout
+- ?
+- A RCO mostra
+- onde a venda se perde
+- .
+
 ## 04 Dores
 
 - O que pode estar acontecendo hoje

@@ -1,0 +1,34 @@
+/* ============================================================
+   Hero da /lp-ecom: fundo animado de ponta a ponta e frases. Porte do fundo e das frases do HTML do vídeo
+   (rco-hub-hero-x300.html) para CSS puro. Sem imagem. Abaixo de xl as posições são as da pilha (frases, celular, formulário).
+   ============================================================ */
+.hs{--ax:50%;--ay:430px;--bx:34%;--by:640px;--cx:66%;--cy:250px;
+  --mask:radial-gradient(ellipse 95vw 620px at 50% 430px,#000 0%,transparent 100%)}
+@media (min-width:1280px){.hs{--ax:21%;--ay:520px;--bx:12%;--by:760px;--cx:30%;--cy:200px;
+  --mask:radial-gradient(ellipse 420px 640px at 21% 520px,#000 0%,transparent 100%)}}
+
+.hs-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;
+  background:radial-gradient(ellipse 120% 38% at 50% 24%,#132457 0%,#101d41 55%,#0b1531 100%)}
+@media (min-width:1280px){.hs-bg{background:radial-gradient(ellipse 55% 90% at 18% 50%,#132457 0%,#101d41 50%,#0b1531 100%)}}
+.hs-glow{position:absolute;border-radius:50%;will-change:transform}
+.hs-glow-a{left:var(--ax);top:var(--ay);width:1000px;height:1000px;margin:-500px 0 0 -500px;background:radial-gradient(circle,rgba(13,103,240,.52) 0%,rgba(13,103,240,.22) 30%,rgba(13,103,240,.07) 52%,rgba(13,103,240,0) 68%)}
+.hs-glow-b{left:var(--bx);top:var(--by);width:720px;height:720px;margin:-360px 0 0 -360px;background:radial-gradient(circle,rgba(61,220,151,.28) 0%,rgba(61,220,151,.09) 38%,rgba(61,220,151,0) 66%)}
+.hs-glow-c{left:var(--cx);top:var(--cy);width:620px;height:620px;margin:-310px 0 0 -310px;background:radial-gradient(circle,rgba(13,103,240,.26) 0%,rgba(13,103,240,0) 65%)}
+.hs-grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:64px 64px;-webkit-mask-image:var(--mask);mask-image:var(--mask)}
+/* Escurecimento: atrás do formulário (à direita no xl, embaixo na pilha), para o formulário ler bem. */
+.hs-shade{position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(4,10,28,.9) 0%,rgba(5,12,32,.72) 30%,rgba(8,16,40,.3) 46%,rgba(16,29,65,0) 58%),
+             radial-gradient(ellipse 90% 70% at 50% 28%,rgba(0,0,0,0) 55%,rgba(3,8,24,.45) 100%)}
+@media (min-width:1280px){.hs-shade{background:linear-gradient(270deg,rgba(4,10,28,.92) 0%,rgba(5,12,32,.85) 32%,rgba(8,16,40,.6) 44%,rgba(12,23,55,.22) 50%,rgba(16,29,65,0) 54%),
+             radial-gradient(ellipse 60% 85% at 22% 50%,rgba(0,0,0,0) 55%,rgba(3,8,24,.45) 100%)}}
+/* Emenda com o resto da página (o fundo único da página começa em #101d41). */
+.hs-seam{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(0deg,#101d41 0%,rgba(16,29,65,0) 100%)}
+
+/* Frases */
+.hs-heads{display:grid;align-items:center;color:#fff}
+.hs-hl{grid-area:1/1;font-size:clamp(26px,7.4vw,34px);font-weight:600;line-height:1.14;letter-spacing:-.025em;text-align:center}
+@media (min-width:1280px){.hs-hl{font-size:40px;text-align:left}}
+.hs-w{display:inline-block;opacity:0;will-change:transform,opacity,filter}
+.hs-k{color:#0d67f0;text-shadow:0 0 30px rgba(13,103,240,.6),0 0 60px rgba(13,103,240,.3)}

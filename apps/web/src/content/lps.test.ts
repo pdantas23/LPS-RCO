@@ -129,22 +129,25 @@ describe("/lp-ecom: linha do tempo do caminho da compra (Feature24)", () => {
   });
 });
 
-describe("/lp-ecom: vídeo do hero", () => {
-  it("um source mp4 só, sem áudio nem controles, só a partir de xl, entra na primeira interação e os arquivos existem", async () => {
+describe("/lp-ecom: hero com o celular animado (sem vídeo)", () => {
+  it("não sobrou vídeo, poster nem carga na primeira interação; h1 só no DOM; celular e frases decorativos", async () => {
     const fs = await import("node:fs");
     const path = await import("node:path");
-    const src = fs.readFileSync(path.resolve(__dirname, "../components/EcomHeroVideo.tsx"), "utf8");
-    expect(src).toContain("muted");
-    expect(src).toContain("loop");
-    expect(src).toContain("playsInline");
-    expect(src).toContain('preload="metadata"');
-    expect(src).not.toContain("controls");
-    expect(src).not.toContain("webm");
-    expect(src).toContain("(min-width: 1280px)");
-    expect(src).toContain("pointermove");
-    expect(src).toContain("prefers-reduced-motion");
-    const pub = path.resolve(__dirname, "../../public/ecom");
-    expect(fs.statSync(path.join(pub, "hero-ecom.mp4")).size).toBeLessThan(2 * 1024 * 1024);
-    expect(fs.statSync(path.join(pub, "hero-ecom-poster.jpg")).size).toBeLessThan(100 * 1024);
+    const comp = path.resolve(__dirname, "../components");
+    for (const f of ["EcomHeroVideo.tsx", "EcomHeroGraphic.tsx"]) expect(fs.existsSync(path.join(comp, f)), f).toBe(false);
+    for (const f of ["hero-ecom.mp4", "hero-ecom-poster.jpg"]) expect(fs.existsSync(path.resolve(__dirname, "../../public/ecom", f)), f).toBe(false);
+    const page = fs.readFileSync(path.join(comp, "LandingPageEcom.tsx"), "utf8");
+    expect(page).toContain('<h1 className="sr-only">');
+    expect(page).toContain("<PhoneJourney");
+    expect(page).toContain("<EcomHeroHeadlines");
+    expect(page).not.toContain("<video");
+    const phone = fs.readFileSync(path.join(comp, "ui/phone-journey.tsx"), "utf8");
+    expect(phone).toContain('aria-hidden="true"');
+    const heads = fs.readFileSync(path.join(comp, "EcomHeroHeadlines.tsx"), "utf8");
+    expect(heads).toContain('aria-hidden="true"');
+    const story = fs.readFileSync(path.join(comp, "EcomHeroStory.tsx"), "utf8");
+    expect(story).toContain("IntersectionObserver");
+    expect(story).toContain("visibilitychange");
+    expect(story).toContain("prefers-reduced-motion");
   });
 });

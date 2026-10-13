@@ -30,7 +30,7 @@ Next: snippet no layout raiz (`components/tracking/Analytics.tsx`, `next/script`
 | Evento | Quando | Parâmetros além de `lp_origem` e `page_id` | LPs |
 |---|---|---|---|
 | `page_view` | Entrada na página (e navegação client-side no Next) | `page_path`; `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `fbclid` (só os presentes; o Next também `wbraid`, `gbraid`) | todas |
-| `cta_click` | Clique em botão que rola ao formulário | `cta_location` (na lp-ecom: `menu`, `hero`, `servico`, `fechamento`), `cta_text` | lp01, lp02, lp-ecom (o formulário não tem CTA) |
+| `cta_click` | Clique em botão que rola ao formulário | `cta_location` (na lp-ecom: `menu`, `servico`, `fechamento`; o hero não tem botão, o formulário está nele), `cta_text` | lp01, lp02, lp-ecom (o formulário não tem CTA) |
 | `form_start` | Primeiro foco/interação no formulário (1x por visita) | | todas |
 | `form_submit` | Tentativa de envio (clique no botão final), válida ou não | | todas |
 | `form_error` | Falha ao enviar ou validar | `error_type`: `validation` \| `server` \| `network` \| `rate_limit`; `fields` (Next, só em `validation`); `error_detail` (formulário: código original do erro) | todas |

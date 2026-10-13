@@ -55,6 +55,21 @@ export const ECOM_HERO = {
   microtext: "Preencha os dados da sua loja. Nosso time entra em contato para entender seu cenário e avaliar os próximos passos.",
 } as const;
 
+/**
+ * As 5 frases animadas do hero (texto HTML real, sincronizadas com as telas do celular). `key` é a palavra em destaque
+ * (cor da marca); `after` que começa em pontuação gruda na última palavra. Decorativas: vão em bloco aria-hidden
+ * (o h1 acessível é o ECOM_HERO.title, escondido só visualmente).
+ */
+export const ECOM_HERO_STORY = {
+  headlines: [
+    { before: "Seu", key: "anúncio", after: "leva a pessoa até a loja." },
+    { before: "Ela vê o", key: "produto", after: "." },
+    { before: "Coloca no", key: "carrinho", after: "." },
+    { before: "E para no", key: "checkout", after: "?" },
+    { before: "A RCO mostra", key: "onde a venda se perde", after: "." },
+  ],
+} as const;
+
 export const ECOM_PAINS = {
   eyebrow: "O que pode estar acontecendo hoje",
   title: "O anúncio leva a pessoa até a loja. A venda pode estar se perdendo depois disso.",
