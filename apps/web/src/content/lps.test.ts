@@ -125,3 +125,23 @@ describe("/lp-ecom: linha do tempo do caminho da compra (Feature24)", () => {
     expect(page).not.toContain("measure:"); // ainda sem preencher
   });
 });
+
+describe("/lp-ecom: vídeo do hero", () => {
+  it("um source mp4 só, sem áudio nem controles, só a partir de xl, entra na primeira interação e os arquivos existem", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const src = fs.readFileSync(path.resolve(__dirname, "../components/EcomHeroVideo.tsx"), "utf8");
+    expect(src).toContain("muted");
+    expect(src).toContain("loop");
+    expect(src).toContain("playsInline");
+    expect(src).toContain('preload="metadata"');
+    expect(src).not.toContain("controls");
+    expect(src).not.toContain("webm");
+    expect(src).toContain("(min-width: 1280px)");
+    expect(src).toContain("pointermove");
+    expect(src).toContain("prefers-reduced-motion");
+    const pub = path.resolve(__dirname, "../../public/ecom");
+    expect(fs.statSync(path.join(pub, "hero-ecom.mp4")).size).toBeLessThan(2 * 1024 * 1024);
+    expect(fs.statSync(path.join(pub, "hero-ecom-poster.jpg")).size).toBeLessThan(100 * 1024);
+  });
+});

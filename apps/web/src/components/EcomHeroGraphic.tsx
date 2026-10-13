@@ -4,7 +4,7 @@ import { EcomIcon } from "./EcomIcon";
  * Elemento gráfico discreto do hero: linhas finas ligando os ícones de anúncio, produto, carrinho e pedido,
  * ao fundo e em baixa opacidade. Só decoração (aria-hidden), sem números nem nomes.
  */
-export function EcomHeroGraphic() {
+export function EcomHeroGraphic({ className = "" }: { className?: string }) {
   const nodes = [
     { icon: "megaphone", left: "6%", top: "78%" },
     { icon: "store", left: "34%", top: "90%" },
@@ -12,7 +12,7 @@ export function EcomHeroGraphic() {
     { icon: "package-check", left: "92%", top: "92%" },
   ];
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-25">
+    <div aria-hidden="true" className={`pointer-events-none absolute inset-0 overflow-hidden opacity-25 ${className}`}>
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
         <path d="M6 78 C 20 70, 26 94, 34 90 S 54 70, 64 84 S 84 98, 92 92" stroke="var(--brand)" strokeWidth="0.25" vectorEffect="non-scaling-stroke" style={{ strokeWidth: 1 }} />
       </svg>
