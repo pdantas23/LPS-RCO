@@ -46,40 +46,6 @@ export function IconCards({ items, columns = 3, quote = false }: { items: readon
   );
 }
 
-/**
- * Caminho da compra: etapas ligadas por setas simples. Horizontal no desktop, vertical no celular.
- * Rótulos em HTML, sem percentuais nem números de exemplo.
- */
-export function PurchaseFlow({ steps }: { steps: readonly IconCardItem[] }) {
-  // Grade de colunas IGUAIS (minmax(0,1fr)) e linhas de mesma altura (auto-rows-fr): os 5 cartões têm a mesma largura
-  // e a mesma altura. As setas ficam fora dos cartões, absolutas no vão entre eles (não entram no cálculo da largura).
-  return (
-    <ol className="grid auto-rows-fr grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-5">
-      {steps.map((s, i) => (
-        <li key={s.title} className="relative">
-          <div className="h-full rounded-2xl border border-line bg-surface p-5 text-center">
-            <div className="mx-auto grid size-12 place-items-center rounded-full border border-line bg-bg text-brand">
-              <EcomIcon name={s.icon} />
-            </div>
-            <h3 className="mt-3 text-lg font-bold">{s.title}</h3>
-            <p className="mt-1.5 text-sm text-mute">{s.text}</p>
-          </div>
-          {i < steps.length - 1 ? (
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-10 left-1/2 grid h-10 w-10 -translate-x-1/2 place-items-center text-brand lg:top-1/2 lg:right-[-2.5rem] lg:bottom-auto lg:left-auto lg:h-10 lg:-translate-x-0 lg:-translate-y-1/2"
-            >
-              <svg viewBox="0 0 24 24" className="size-6 rotate-90 fill-none stroke-current lg:rotate-0" strokeWidth="1.75">
-                <path d="M4 12h15m-5-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          ) : null}
-        </li>
-      ))}
-    </ol>
-  );
-}
-
 /** Ilustração simples em código: grade de produtos em caixas (estoque próprio). */
 function StockArt() {
   return (

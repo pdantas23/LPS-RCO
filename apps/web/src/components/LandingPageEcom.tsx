@@ -8,12 +8,13 @@ import { EcomHeader } from "./EcomHeader";
 import { EcomHeroGraphic } from "./EcomHeroGraphic";
 import { EcomIcon, iconOf } from "./EcomIcon";
 import { EcomLeadForm } from "./EcomLeadForm";
-import { IconCards, PurchaseFlow, SectionHead, TwoModels } from "./EcomSections";
+import { IconCards, SectionHead, TwoModels } from "./EcomSections";
 import { Faq } from "./Faq";
 import { HeroCta } from "./HeroCta";
 import { Steps } from "./sections";
 import { DarkGradientLayers } from "./ui/dark-gradient-bg";
 import { FeaturesWithPanel } from "./ui/features-with-panel";
+import { MilestoneTimeline } from "./ui/feature-24-milestone-timeline";
 
 const PAGE = "ECOM";
 const FORM = `#${ECOM_ANCHORS.form}`;
@@ -25,7 +26,7 @@ const SECTION = `${WRAP} py-12 sm:py-16`;
  * Texto em content/ecom.ts. Um formulário só, no hero; todos os CTAs rolam até ele (#formulario).
  *
  * Seção → componente: menu EcomHeader | 03 hero (EcomLeadForm + EcomHeroGraphic) | 04 IconCards |
- * 05 PurchaseFlow | 06 FeaturesWithPanel (da P05) | 07 IconCards quote | 08 TwoModels | 09 IconCards |
+ * 05 MilestoneTimeline (Feature24) | 06 FeaturesWithPanel (da P05) | 07 IconCards quote | 08 TwoModels | 09 IconCards |
  * 10 Steps (da P05/P04) | 11 provas (escondida, SHOW_PROOF_SECTION) | 13 Steps | 14 Faq (das outras LPs) |
  * 15 fechamento + EcomFooter. Sem banner de cookies, sem pop-up, sem CTA fixo.
  */
@@ -77,11 +78,20 @@ export function LandingPageEcom() {
           <IconCards items={ECOM_PAINS.items} />
         </section>
 
-        {/* ---------- 05 Caminho da compra ---------- */}
+        {/* ---------- 05 Caminho da compra (linha do tempo de marcos, Feature24) ---------- */}
         <section className={SECTION}>
-          <SectionHead eyebrow={ECOM_FLOW.eyebrow} title={ECOM_FLOW.title} support={ECOM_FLOW.text} />
-          <PurchaseFlow steps={ECOM_FLOW.steps} />
-          <p className="mx-auto mt-8 max-w-2xl text-center text-lg">{ECOM_FLOW.closing}</p>
+          <MilestoneTimeline
+            eyebrow={ECOM_FLOW.eyebrow}
+            title={ECOM_FLOW.title}
+            subtitle={ECOM_FLOW.text}
+            items={ECOM_FLOW.steps.map((s, i) => ({
+              tag: `Etapa ${i + 1}`,
+              title: s.title,
+              description: s.text,
+              icon: <EcomIcon name={s.icon} className="size-5" />,
+            }))}
+            footer={<p className="mx-auto mt-10 max-w-2xl text-center text-lg">{ECOM_FLOW.closing}</p>}
+          />
         </section>
 
         {/* ---------- 06 O que a RCO faz (FeaturesWithPanel, o painel clicável da P05) ---------- */}

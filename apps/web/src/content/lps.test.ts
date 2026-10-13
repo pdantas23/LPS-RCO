@@ -80,11 +80,12 @@ describe("/lp-ecom: código sem sobras e cartões de tamanho igual", () => {
     for (const f of ["gallery4.tsx", "carousel.tsx", "button.tsx"]) expect(fs.existsSync(path.join(ui, f)), f).toBe(false);
   });
 
-  it("as grades de cartões usam colunas iguais e linhas de mesma altura (auto-rows-fr)", async () => {
+  it("as grades de cartões (dores, objeções, indicadores, dois modelos) usam colunas iguais e linhas de mesma altura (auto-rows-fr)", async () => {
     const fs = await import("node:fs");
     const path = await import("node:path");
     const src = fs.readFileSync(path.resolve(__dirname, "../components/EcomSections.tsx"), "utf8");
-    expect((src.match(/auto-rows-fr/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    expect((src.match(/auto-rows-fr/g) ?? []).length).toBeGreaterThanOrEqual(2);
+    expect(src).not.toContain("PurchaseFlow");
   });
 });
 
@@ -105,5 +106,22 @@ describe("rodapé: Instagram como primeiro item nas três LPs do Next", () => {
     expect(ig).toContain("linearGradient");
     expect(ig).toContain("useId");
     for (const f of ["sections.tsx", "EcomFooter.tsx"]) expect(fs.readFileSync(path.join(dir, f), "utf8"), f).toContain("<InstagramLink />");
+  });
+});
+
+describe("/lp-ecom: linha do tempo do caminho da compra (Feature24)", () => {
+  it("usa o pacote motion que já existe, respeita prefers-reduced-motion e aceita o campo opcional 'measure' sem renderizá-lo vazio", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.resolve(__dirname, "../components");
+    const t = fs.readFileSync(path.join(dir, "ui/feature-24-milestone-timeline.tsx"), "utf8");
+    expect(t).toContain('from "motion/react"');
+    expect(t).not.toContain("framer-motion");
+    expect(t).toContain("useReducedMotion");
+    expect(t).toContain("measure?: string");
+    expect(t).toContain("{item.measure ?");
+    const page = fs.readFileSync(path.join(dir, "LandingPageEcom.tsx"), "utf8");
+    expect(page).toContain("<MilestoneTimeline");
+    expect(page).not.toContain("measure:"); // ainda sem preencher
   });
 });
