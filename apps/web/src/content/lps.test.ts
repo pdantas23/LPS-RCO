@@ -60,7 +60,10 @@ describe("/lp-ecom: sem sobras das versões anteriores", () => {
     expect(page).not.toContain("Gallery4");
     expect(page).not.toContain("TestimonialsMarquee");
     expect(page).not.toContain("PROOF_PLACEHOLDERS");
-    expect(fs.existsSync(path.resolve(__dirname, "../../public/ecom"))).toBe(false);
+    // as fotos das dores antigas saíram de public/ecom (hoje só há o vídeo do hero e o poster)
+    for (const f of ["dor-anuncio.webp", "dor-promocao.webp", "dor-carrinho.webp", "dor-relatorio.webp", "dor-cliente.webp", "CREDITOS.md"]) {
+      expect(fs.existsSync(path.resolve(__dirname, "../../public/ecom", f)), f).toBe(false);
+    }
   });
 
   it("a seção de provas fica escondida e sem cases", async () => {
