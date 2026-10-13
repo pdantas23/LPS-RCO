@@ -116,7 +116,8 @@ export function MilestoneTimeline({ eyebrow, title, subtitle, items, measureLabe
           })}
         </ol>
       </motion.div>
-      {footer}
+      {/* Elemento vindo do servidor: fica sozinho dentro de um wrapper (como filho único) para o React não pedir `key`. */}
+      {footer ? <div>{footer}</div> : null}
     </div>
   );
 }
