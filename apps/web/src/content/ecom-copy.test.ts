@@ -9,7 +9,7 @@ import * as ecom from "./ecom";
 
 const SKIP_KEYS = new Set(["icon", "icons", "href", "id", "formId", "formName", "path"]);
 const GROUPS = [
-  "ECOM_PAGE", "ECOM_NAV", "ECOM_HERO", "ECOM_HERO_STORY", "ECOM_PAINS", "ECOM_FLOW", "ECOM_SERVICE", "ECOM_OBJECTIONS", "ECOM_MODELS",
+  "ECOM_PAGE", "ECOM_HERO", "ECOM_HERO_STORY", "ECOM_PAINS", "ECOM_FLOW", "ECOM_SERVICE", "ECOM_OBJECTIONS", "ECOM_MODELS",
   "ECOM_INDICATORS", "ECOM_METHOD", "ECOM_PROOF", "FATURAMENTOS_ECOM", "INVESTIMENTOS_ECOM", "ECOM_FORM", "ECOM_NEXT",
   "ECOM_FAQ", "ECOM_CLOSING", "ECOM_FOOTER",
 ] as const;

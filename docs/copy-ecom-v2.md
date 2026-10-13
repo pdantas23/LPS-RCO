@@ -13,24 +13,11 @@ Regra do Perfil (interno, não exibido): "Fora" somente para a faixa "Até R$ 29
 - Sua loja sabe onde está perdendo vendas?
 - Conheça o serviço de tráfego para lojas virtuais da RCO Hub e solicite uma conversa sobre as campanhas do seu e-commerce.
 
-## 02 Menu
-
-- Como trabalhamos
-- O que acompanhamos
-- Para quem é
-- Dúvidas
-- Analisar minha loja
-
 ## 03 Hero
 
 - Tráfego pago para e-commerce e dropshipping
 - Sua loja recebe visitas, mas você sabe onde está perdendo vendas?
 - A RCO gerencia suas campanhas e analisa o caminho até a compra. Entenda quais produtos, anúncios e etapas da loja precisam de atenção antes de colocar mais dinheiro em tráfego.
-- Campanhas planejadas para o seu catálogo e suas ofertas
-- Análise de carrinho, checkout e compras
-- Decisões de investimento com base nos dados da loja
-- Quero analisar meu e-commerce
-- Preencha os dados da sua loja. Nosso time entra em contato para entender seu cenário e avaliar os próximos passos.
 
 ## 03 Hero: frases animadas do celular
 

@@ -90,7 +90,7 @@ export function MilestoneTimeline({ eyebrow, title, subtitle, items, measureLabe
       <SectionHead eyebrow={eyebrow} title={title} support={subtitle} />
       <motion.div key={animate ? "animado" : "estatico"} {...container} className="relative mx-auto max-w-3xl">
         {/* Linha vertical: à esquerda no celular, no centro a partir de sm. */}
-        <div aria-hidden="true" className="absolute top-0 bottom-0 left-[15px] w-0.5 bg-line sm:left-1/2 sm:-translate-x-1/2" />
+        <div aria-hidden="true" className="absolute top-0 bottom-0 left-[16px] w-0.5 -translate-x-1/2 bg-line sm:left-1/2" />
         <ol>
           {items.map((item, i) => {
             const left = i % 2 === 0;
@@ -103,7 +103,7 @@ export function MilestoneTimeline({ eyebrow, title, subtitle, items, measureLabe
                 {/* Ponto na cor da marca, sobre a linha. */}
                 <span
                   aria-hidden="true"
-                  className="absolute left-[10px] z-10 size-3.5 -translate-x-[6px] rounded-full border-4 border-brand bg-bg transition-transform duration-300 group-hover:scale-150 sm:left-1/2 sm:-translate-x-1/2"
+                  className="absolute left-[16px] z-10 size-3.5 -translate-x-1/2 rounded-full border-4 border-brand bg-bg transition-transform duration-300 group-hover:scale-150 sm:left-1/2"
                 />
                 <div className={cn("w-full pl-8 sm:w-[45%] sm:pl-0", !left && "pointer-events-none hidden sm:block sm:opacity-0")} aria-hidden={!left || undefined}>
                   {left ? <Card item={item} measureLabel={measureLabel} align="left" /> : null}

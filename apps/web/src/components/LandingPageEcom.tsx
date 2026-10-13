@@ -1,19 +1,18 @@
-import { Check } from "lucide-react";
 import {
   ECOM_ANCHORS, ECOM_CLOSING, ECOM_FAQ, ECOM_FLOW, ECOM_HERO, ECOM_INDICATORS, ECOM_METHOD, ECOM_MODELS, ECOM_NEXT,
   ECOM_OBJECTIONS, ECOM_PAINS, ECOM_PROOF, ECOM_SERVICE, PROOF_CASES, SHOW_PROOF_SECTION,
 } from "@/content/ecom";
 import { EcomFooter } from "./EcomFooter";
-import { EcomHeader } from "./EcomHeader";
+import { EcomPageBackground } from "./EcomPageBackground";
 import { EcomHeroHeadlines } from "./EcomHeroHeadlines";
 import { EcomHeroStory } from "./EcomHeroStory";
 import { EcomIcon, iconOf } from "./EcomIcon";
+import { Logo } from "./Logo";
 import { EcomLeadForm } from "./EcomLeadForm";
 import { IconCards, SectionHead, TwoModels } from "./EcomSections";
 import { Faq } from "./Faq";
 import { HeroCta } from "./HeroCta";
 import { Steps } from "./sections";
-import { DarkGradientLayers } from "./ui/dark-gradient-bg";
 import { FeaturesWithPanel } from "./ui/features-with-panel";
 import { MilestoneTimeline } from "./ui/feature-24-milestone-timeline";
 import { PhoneJourney } from "./ui/phone-journey";
@@ -27,7 +26,7 @@ const SECTION = `${WRAP} py-12 sm:py-16`;
  * /lp-ecom, versão final do documento (09/10/2026), sobre UM fundo contínuo (o do hero, como na P05).
  * Texto em content/ecom.ts. Um formulário só, no hero; todos os CTAs rolam até ele (#formulario).
  *
- * Seção → componente: menu EcomHeader | 03 hero (EcomHeroStory: fundo animado + EcomHeroHeadlines + PhoneJourney + EcomLeadForm) | 04 IconCards |
+ * Seção → componente: 03 hero (EcomHeroStory: fundo animado + EcomHeroHeadlines + PhoneJourney + EcomLeadForm) | 04 IconCards |
  * 05 MilestoneTimeline (Feature24) | 06 FeaturesWithPanel (da P05) | 07 IconCards quote | 08 TwoModels | 09 IconCards |
  * 10 Steps (da P05/P04) | 11 provas (escondida, SHOW_PROOF_SECTION) | 13 Steps | 14 Faq (das outras LPs) |
  * 15 fechamento + EcomFooter. Sem banner de cookies, sem pop-up, sem CTA fixo.
@@ -35,46 +34,29 @@ const SECTION = `${WRAP} py-12 sm:py-16`;
 export function LandingPageEcom() {
   return (
     <main id="topo" className="relative">
-      <div aria-hidden="true" className="absolute inset-0">
-        <DarkGradientLayers />
-      </div>
+      <EcomPageBackground />
       <div className="relative">
-        <EcomHeader page={PAGE} />
-
         {/* ---------- 03 Hero ----------
-            O fundo animado cobre o hero inteiro (EcomHeroStory). No primeiro plano, três partes: as frases animadas, o celular
-            (PhoneJourney) e o formulário. xl (1280+): celular | frases | formulário lado a lado. Abaixo de xl: pilha
-            centralizada, nesta ordem: frases, celular, formulário. O h1 fica só no DOM (sr-only): as frases e o celular são
-            decorativos (aria-hidden). Os 3 apoios e o microtexto ficam abaixo, centralizados. */}
-        <EcomHeroStory className="px-5 pt-6 pb-14 sm:pt-10 sm:pb-20">
+            O fundo animado cobre o hero inteiro (EcomHeroStory). Em cima, só o logo centralizado (sem menu). No primeiro plano,
+            três partes: as frases animadas, o celular (PhoneJourney) e o formulário. xl (1280+): celular | frases | formulário
+            lado a lado, e o conjunto encolhe com a altura da tela para o hero caber sem rolar (hero-story.css). Abaixo de xl:
+            pilha centralizada: logo, frases, celular, formulário. O h1 fica só no DOM (sr-only): frases e celular são
+            decorativos (aria-hidden). */}
+        <EcomHeroStory className="px-5 pt-4 pb-10 sm:pb-14 xl:pb-6">
           <div className="relative mx-auto max-w-6xl xl:max-w-7xl">
+            <div className="flex justify-center pt-1 pb-5 xl:pb-3">
+              <Logo className="h-10 xl:h-9" />
+            </div>
             <h1 className="sr-only">{ECOM_HERO.title}</h1>
             <p className="sr-only">
               {ECOM_HERO.eyebrow}. {ECOM_HERO.subtitle}
             </p>
-            <div className="grid grid-cols-[minmax(0,1fr)] justify-items-center gap-8 xl:grid-cols-[360px_minmax(0,1fr)_480px] xl:items-center xl:justify-items-stretch xl:gap-10">
+            <div className="grid grid-cols-[minmax(0,1fr)] justify-items-center gap-8 xl:grid-cols-[var(--hs-phone-w)_minmax(0,1fr)_var(--hs-form-w)] xl:items-center xl:justify-items-stretch xl:gap-8">
               <EcomHeroHeadlines className="w-full max-w-sm xl:order-2 xl:max-w-none" />
               <PhoneJourney className="w-[min(72vw,calc(65svh*0.4878))] xl:order-1 xl:w-full" />
-              <div className="w-full xl:order-3">
+              <div className="hs-form w-full xl:order-3">
                 <EcomLeadForm />
               </div>
-            </div>
-
-            <div className="mt-10">
-              <ul className="mx-auto flex w-fit max-w-full flex-col gap-3 xl:w-auto xl:flex-row xl:justify-center xl:gap-8">
-                {ECOM_HERO.supports.map((s) => (
-                  <li key={s.text} className="flex items-center gap-3 text-left">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-bg text-brand">
-                      <EcomIcon name={s.icon} className="size-5" />
-                    </span>
-                    <span>{s.text}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mx-auto mt-4 hidden max-w-2xl items-start justify-center gap-2 text-center text-sm text-mute md:flex">
-                <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand" />
-                {ECOM_HERO.microtext}
-              </p>
             </div>
           </div>
         </EcomHeroStory>
@@ -186,8 +168,8 @@ export function LandingPageEcom() {
           <Faq items={ECOM_FAQ.items.map((f) => ({ q: f.q, a: f.a }))} page={PAGE} eyebrow={ECOM_FAQ.eyebrow} title={ECOM_FAQ.title} />
         </div>
 
-        {/* ---------- 15 Fechamento (faixa em azul escuro) e rodapé ---------- */}
-        <section className="bg-surface/80">
+        {/* ---------- 15 Fechamento e rodapé (sobre o fundo único da página) ---------- */}
+        <section>
           <div className="mx-auto max-w-3xl px-5 py-14 text-center sm:py-20">
             <h2 className="text-2xl leading-tight font-bold sm:text-3xl">{ECOM_CLOSING.headline}</h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-mute">{ECOM_CLOSING.text}</p>

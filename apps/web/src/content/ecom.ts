@@ -28,31 +28,14 @@ export const ECOM_PAGE = {
     "Conheça o serviço de tráfego para lojas virtuais da RCO Hub e solicite uma conversa sobre as campanhas do seu e-commerce.",
 } as const;
 
-/** Âncoras internas (ids das seções). */
+/** Âncoras internas (ids das seções). O menu saiu; os ids ficam para links diretos. */
 export const ECOM_ANCHORS = { form: "formulario", method: "como-trabalhamos", indicators: "o-que-acompanhamos", models: "para-quem-e", faq: "duvidas" } as const;
-
-export const ECOM_NAV = {
-  links: [
-    { label: "Como trabalhamos", href: `#${ECOM_ANCHORS.method}` },
-    { label: "O que acompanhamos", href: `#${ECOM_ANCHORS.indicators}` },
-    { label: "Para quem é", href: `#${ECOM_ANCHORS.models}` },
-    { label: "Dúvidas", href: `#${ECOM_ANCHORS.faq}` },
-  ],
-  cta: "Analisar minha loja",
-} as const;
 
 export const ECOM_HERO = {
   eyebrow: "Tráfego pago para e-commerce e dropshipping",
   title: "Sua loja recebe visitas, mas você sabe onde está perdendo vendas?",
   subtitle:
     "A RCO gerencia suas campanhas e analisa o caminho até a compra. Entenda quais produtos, anúncios e etapas da loja precisam de atenção antes de colocar mais dinheiro em tráfego.",
-  supports: [
-    { icon: "shopping-bag", text: "Campanhas planejadas para o seu catálogo e suas ofertas" },
-    { icon: "shopping-cart", text: "Análise de carrinho, checkout e compras" },
-    { icon: "mouse-pointer-click", text: "Decisões de investimento com base nos dados da loja" },
-  ],
-  cta: "Quero analisar meu e-commerce",
-  microtext: "Preencha os dados da sua loja. Nosso time entra em contato para entender seu cenário e avaliar os próximos passos.",
 } as const;
 
 /**
