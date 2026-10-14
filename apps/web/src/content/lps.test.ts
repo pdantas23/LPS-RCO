@@ -83,12 +83,16 @@ describe("/lp-ecom: código sem sobras e cartões de tamanho igual", () => {
     for (const f of ["gallery4.tsx", "carousel.tsx", "button.tsx"]) expect(fs.existsSync(path.join(ui, f)), f).toBe(false);
   });
 
-  it("as grades de cartões (dores, objeções, indicadores, dois modelos) usam colunas iguais e linhas de mesma altura (auto-rows-fr)", async () => {
+  it("as grades de cartões (dores, objeções, indicadores e dois modelos) usam linhas de mesma altura (auto-rows-fr)", async () => {
     const fs = await import("node:fs");
     const path = await import("node:path");
-    const src = fs.readFileSync(path.resolve(__dirname, "../components/EcomSections.tsx"), "utf8");
-    expect((src.match(/auto-rows-fr/g) ?? []).length).toBeGreaterThanOrEqual(2);
-    expect(src).not.toContain("PurchaseFlow");
+    const dir = path.resolve(__dirname, "../components");
+    const sections = fs.readFileSync(path.join(dir, "EcomSections.tsx"), "utf8");
+    const grid = fs.readFileSync(path.join(dir, "ui/grid-feature-cards.tsx"), "utf8");
+    expect(sections).toContain("auto-rows-fr"); // TwoModels
+    expect(grid).toContain("auto-rows-fr"); // Dores, Objeções, Indicadores
+    expect(sections).not.toContain("PurchaseFlow");
+    expect(sections).not.toContain("IconCards"); // substituído pelo GridFeatureCards
   });
 });
 
@@ -177,5 +181,35 @@ describe("/lp-ecom: animações abaixo do hero", () => {
     expect(ctl).toContain("prefers-reduced-motion: reduce");
     expect(ctl).toContain("IntersectionObserver");
     expect(ctl).toContain("rv-live");
+  });
+});
+
+describe("/lp-ecom: GridFeatureCards e cores por seção", () => {
+  it("o padrão da malha é determinístico (mesmo título, mesmos quadrados) e fica nas faixas do original", async () => {
+    const { patternFor } = await import("../components/ui/grid-feature-cards");
+    const a = patternFor("Visita entra, pedido não aparece");
+    expect(patternFor("Visita entra, pedido não aparece")).toEqual(a);
+    expect(patternFor("Outro título")).not.toEqual(a);
+    expect(a).toHaveLength(5);
+    for (const [x, y] of a) {
+      expect(x).toBeGreaterThanOrEqual(7);
+      expect(x).toBeLessThanOrEqual(10);
+      expect(y).toBeGreaterThanOrEqual(1);
+      expect(y).toBeLessThanOrEqual(6);
+    }
+  });
+
+  it("não usa Math.random, e cada seção tem a sua cor como token no CSS (nada de hex nos componentes)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.resolve(__dirname, "../components");
+    const grid = fs.readFileSync(path.join(dir, "ui/grid-feature-cards.tsx"), "utf8");
+    expect(grid).not.toContain("Math.random");
+    expect(grid).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+    const css = fs.readFileSync(path.join(dir, "lp-motion.css"), "utf8");
+    for (const t of ["tone-amber", "tone-violet", "tone-green"]) expect(css).toContain(`.lpx .${t}`);
+    const page = fs.readFileSync(path.join(dir, "LandingPageEcom.tsx"), "utf8");
+    for (const t of ["tone-amber", "tone-violet", "tone-green"]) expect(page).toContain(t);
+    expect(page).not.toContain("<IconCards");
   });
 });

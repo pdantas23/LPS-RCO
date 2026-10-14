@@ -10,7 +10,8 @@ import { EcomHeroStory } from "./EcomHeroStory";
 import { EcomIcon, iconOf } from "./EcomIcon";
 import { Logo } from "./Logo";
 import { EcomLeadForm } from "./EcomLeadForm";
-import { IconCards, SectionHead, TwoModels } from "./EcomSections";
+import { SectionHead, TwoModels } from "./EcomSections";
+import { GridFeatureCards } from "./ui/grid-feature-cards";
 import { Faq } from "./Faq";
 import { HeroCta } from "./HeroCta";
 import { Steps } from "./sections";
@@ -27,8 +28,8 @@ const SECTION = `${WRAP} py-12 sm:py-16`;
  * /lp-ecom, versão final do documento (09/10/2026), sobre UM fundo contínuo (o do hero, como na P05).
  * Texto em content/ecom.ts. Um formulário só, no hero; todos os CTAs rolam até ele (#formulario).
  *
- * Seção → componente: 03 hero (EcomHeroStory: fundo animado + EcomHeroHeadlines + PhoneJourney + EcomLeadForm) | 04 IconCards |
- * 05 MilestoneTimeline (Feature24) | 06 FeaturesWithPanel (da P05) | 07 IconCards quote | 08 TwoModels | 09 IconCards |
+ * Seção → componente: 03 hero (EcomHeroStory: fundo animado + EcomHeroHeadlines + PhoneJourney + EcomLeadForm) | 04 GridFeatureCards (âmbar) |
+ * 05 MilestoneTimeline (Feature24) | 06 FeaturesWithPanel (da P05) | 07 GridFeatureCards (violeta, fala em destaque) | 08 TwoModels | 09 GridFeatureCards (verde) |
  * 10 Steps (da P05/P04) | 11 provas (escondida, SHOW_PROOF_SECTION) | 13 Steps | 14 Faq (das outras LPs) |
  * 15 fechamento + EcomFooter. Sem banner de cookies, sem pop-up, sem CTA fixo.
  */
@@ -64,9 +65,9 @@ export function LandingPageEcom() {
         </EcomHeroStory>
 
         {/* ---------- 04 Dores ---------- */}
-        <section className={SECTION}>
+        <section className={`${SECTION} tone-amber`}>
           <SectionHead eyebrow={ECOM_PAINS.eyebrow} title={ECOM_PAINS.title} support={ECOM_PAINS.support} />
-          <IconCards items={ECOM_PAINS.items} />
+          <GridFeatureCards items={ECOM_PAINS.items} />
         </section>
 
         {/* ---------- 05 Caminho da compra (linha do tempo de marcos, Feature24) ---------- */}
@@ -112,9 +113,9 @@ export function LandingPageEcom() {
         </section>
 
         {/* ---------- 07 Objeções ---------- */}
-        <section className={SECTION}>
+        <section className={`${SECTION} tone-violet`}>
           <SectionHead eyebrow={ECOM_OBJECTIONS.eyebrow} title={ECOM_OBJECTIONS.title} />
-          <IconCards items={ECOM_OBJECTIONS.items} quote />
+          <GridFeatureCards items={ECOM_OBJECTIONS.items} quote />
         </section>
 
         {/* ---------- 08 Dois modelos de loja ---------- */}
@@ -125,9 +126,9 @@ export function LandingPageEcom() {
         </section>
 
         {/* ---------- 09 Indicadores ---------- */}
-        <section id={ECOM_ANCHORS.indicators} className={`${SECTION} scroll-mt-6`}>
+        <section id={ECOM_ANCHORS.indicators} className={`${SECTION} scroll-mt-6 tone-green`}>
           <SectionHead eyebrow={ECOM_INDICATORS.eyebrow} title={ECOM_INDICATORS.title} support={ECOM_INDICATORS.support} />
-          <IconCards items={ECOM_INDICATORS.items} />
+          <GridFeatureCards items={ECOM_INDICATORS.items} />
           <p data-rv-group data-rv-item className="mx-auto mt-8 max-w-2xl text-center text-mute">{ECOM_INDICATORS.note}</p>
         </section>
 

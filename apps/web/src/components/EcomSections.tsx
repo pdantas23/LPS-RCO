@@ -26,7 +26,7 @@ export function SectionHead({ eyebrow, title, support, className }: { eyebrow?: 
 
 export function IconBox({ name }: { name: string }) {
   return (
-    <div className="fx-icon grid size-12 shrink-0 place-items-center rounded-xl border border-line bg-bg text-brand">
+    <div className="fx-icon grid size-12 shrink-0 place-items-center rounded-xl border border-line bg-bg text-(--tone)">
       <EcomIcon name={name} />
     </div>
   );
@@ -36,27 +36,6 @@ export interface IconCardItem {
   icon: string;
   title: string;
   text: string;
-}
-
-/**
- * Grade de cartões com ícone (não clicáveis): 3 colunas no desktop, 1 por linha no celular.
- * `quote`: o título é uma fala em destaque (seção de objeções), em vez de título comum.
- */
-export function IconCards({ items, columns = 3, quote = false }: { items: readonly IconCardItem[]; columns?: 2 | 3; quote?: boolean }) {
-  return (
-    <ul data-rv-group className={cn("grid auto-rows-fr gap-4 sm:gap-5", columns === 3 ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2")}>
-      {items.map((item) => (
-        <li key={item.title} data-rv-item>
-          {/* A entrada ao rolar fica no <li>; o cartão (hover, brilho e reflexo) é o <div>, para os dois efeitos não se atrapalharem. */}
-          <div className="fx-card h-full rounded-2xl border border-line bg-surface p-6">
-            <IconBox name={item.icon} />
-            <h3 className={cn("mt-4 font-bold", quote ? "text-xl leading-snug text-ink" : "text-lg")}>{item.title}</h3>
-            <p className="mt-2 text-mute">{item.text}</p>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
 }
 
 /** Ilustração simples em código: grade de produtos em caixas (estoque próprio). */
