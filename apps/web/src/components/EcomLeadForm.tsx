@@ -186,7 +186,7 @@ export function EcomLeadForm() {
       ) : null}
 
       <div className="mt-6 flex justify-center">
-        <ShimmerButton type="submit" disabled={sending} className="w-full sm:w-[300px]" height={52}>
+        <ShimmerButton type="submit" disabled={sending} className="fx-cta w-full sm:w-[300px]" height={52}>
           {sending ? F.sending : F.submit}
         </ShimmerButton>
       </div>

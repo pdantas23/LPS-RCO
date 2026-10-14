@@ -32,10 +32,16 @@ export function Faq({ items, page, eyebrow, title = "Perguntas frequentes" }: { 
   };
 
   return (
-    <section className="mx-auto max-w-3xl px-5 pb-12 sm:pb-20">
-      {eyebrow ? <p className="mb-3 text-center text-sm font-semibold tracking-wide text-brand uppercase">{eyebrow}</p> : null}
-      <h2 className="mb-6 text-center text-2xl font-bold">{title}</h2>
-      <div className="divide-y divide-line rounded-2xl border border-line bg-surface">
+    <section data-rv-group className="mx-auto max-w-3xl px-5 pb-12 sm:pb-20">
+      {eyebrow ? (
+        <p data-rv-item className="fx-eyebrow mb-3 text-center text-sm font-semibold tracking-wide text-brand uppercase">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h2 data-rv-item className="mb-6 text-center text-2xl font-bold">
+        {title}
+      </h2>
+      <div data-rv-item className="fx-faq divide-y divide-line rounded-2xl border border-line bg-surface">
         {items.map((f, index) => {
           const open = openIndexes.has(index);
           const panelId = `faq-panel-${index}`;

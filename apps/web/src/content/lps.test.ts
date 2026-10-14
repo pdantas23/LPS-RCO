@@ -122,6 +122,8 @@ describe("/lp-ecom: linha do tempo do caminho da compra (Feature24)", () => {
     expect(t).not.toContain("framer-motion");
     expect(t).toContain("useReducedMotion");
     expect(t).toContain("measure?: string");
+    expect(t).toContain("tl-card-lit"); // o cartão acende quando a linha chega no ponto
+    expect(t).not.toContain("flex-row-reverse"); // ícone sempre à esquerda, tudo alinhado à esquerda
     expect(t).toContain("{item.measure ?");
     const page = fs.readFileSync(path.join(dir, "LandingPageEcom.tsx"), "utf8");
     expect(page).toContain("<MilestoneTimeline");
@@ -149,5 +151,31 @@ describe("/lp-ecom: hero com o celular animado (sem vídeo)", () => {
     expect(story).toContain("IntersectionObserver");
     expect(story).toContain("visibilitychange");
     expect(story).toContain("prefers-reduced-motion");
+  });
+});
+
+describe("/lp-ecom: animações abaixo do hero", () => {
+  it("só transform, opacity, filter (e sombra/fundo de brilho) nos keyframes; nada de width, height, top ou left", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const css = fs.readFileSync(path.resolve(__dirname, "../components/lp-motion.css"), "utf8") + fs.readFileSync(path.resolve(__dirname, "../components/hero-story.css"), "utf8");
+    const keyframes = css.match(/@keyframes [^{]+\{(?:[^{}]*\{[^{}]*\})+[^{}]*\}/g) ?? [];
+    expect(keyframes.length).toBeGreaterThan(6);
+    for (const k of keyframes) expect(k, k.slice(0, 40)).not.toMatch(/(^|[;{\s])(width|height|top|left|right|bottom|margin|padding)\s*:/);
+  });
+
+  it("esconde só depois de hidratar (rv-ready), respeita reduced-motion e pausa loops fora da tela (rv-live)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.resolve(__dirname, "../components");
+    const css = fs.readFileSync(path.join(dir, "lp-motion.css"), "utf8");
+    const ctl = fs.readFileSync(path.join(dir, "EcomMotion.tsx"), "utf8");
+    expect(css).toContain(".lpx.rv-ready [data-rv-item]");
+    expect(css).not.toMatch(/^\.lpx \[data-rv-item\]/m); // nunca esconde sem o rv-ready
+    expect(css).toContain("prefers-reduced-motion:no-preference");
+    expect(css).toContain("animation-play-state:paused");
+    expect(ctl).toContain("prefers-reduced-motion: reduce");
+    expect(ctl).toContain("IntersectionObserver");
+    expect(ctl).toContain("rv-live");
   });
 });

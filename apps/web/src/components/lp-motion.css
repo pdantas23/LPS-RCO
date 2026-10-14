@@ -1,0 +1,83 @@
+/* ============================================================
+   Animações da /lp-ecom abaixo do hero. Tudo escopado em `.lpx` (o <main> da página), só transform, opacity e filter
+   (nunca width, height, top ou left). O HTML do servidor chega visível: o estado escondido só existe depois que o
+   EcomMotion marca o main com `rv-ready` (depois de hidratar, e nunca com prefers-reduced-motion).
+   Loops contínuos rodam só dentro de seções com `rv-live` (visíveis) e só com prefers-reduced-motion: no-preference.
+   ============================================================ */
+
+/* ---- Entrada ao rolar: fade, leve subida e blur saindo, em sequência ----
+   Antes de revelar o item só tem opacity 0 (sem transform nem filter): nada de camada de composição por item. A subida e o
+   blur existem só durante a animação de entrada (keyframes, fill `backwards`) e somem quando ela termina. */
+.lpx.rv-ready [data-rv-item]{opacity:0}
+.lpx.rv-ready [data-rv-group].rv-in [data-rv-item],
+.lpx.rv-ready [data-rv-item].rv-in{opacity:1;animation:rv-reveal .75s cubic-bezier(.2,.7,.2,1) calc(var(--i,0) * 75ms) backwards}
+@keyframes rv-reveal{from{opacity:0;transform:translateY(22px);filter:blur(7px)}to{opacity:1;transform:none;filter:none}}
+
+/* ---- Cartões: borda que acende, elevação e reflexo de luz no hover ---- */
+.lpx .fx-card{position:relative;overflow:hidden;transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease}
+.lpx .fx-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(115deg,transparent 38%,rgba(150,190,255,.14) 50%,transparent 62%);transform:translateX(-130%)}
+@media (hover:hover){
+  .lpx .fx-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--brand) 70%,transparent);
+    box-shadow:0 0 0 1px color-mix(in srgb,var(--brand) 30%,transparent),0 16px 40px -16px rgba(13,103,240,.6)}
+  .lpx .fx-card:hover::after{transform:translateX(130%);transition:transform .95s ease}
+}
+@media (hover:none) and (prefers-reduced-motion:no-preference){
+  /* Celular: sem depender de hover, um reflexo e um brilho discretos quando o cartão entra na tela */
+  .lpx.rv-ready [data-rv-group].rv-in .fx-card::after,
+  .lpx.rv-ready [data-rv-item].rv-in .fx-card::after{animation:fx-sheen 1.5s ease calc(.45s + var(--i,0) * 75ms) 1 both}
+  .lpx.rv-ready [data-rv-group].rv-in .fx-card,
+  .lpx.rv-ready [data-rv-item].rv-in .fx-card{animation:fx-flash 1.8s ease calc(.45s + var(--i,0) * 75ms) 1 both}
+}
+@keyframes fx-sheen{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+@keyframes fx-flash{0%,100%{box-shadow:0 0 0 0 rgba(13,103,240,0)}40%{box-shadow:0 0 22px -4px rgba(13,103,240,.5)}}
+
+/* ---- Linha do tempo: quando a linha chega no ponto da etapa, o cartão acende (borda e glow do hover) e o feixe passa uma vez ---- */
+.lpx .tl-card-lit{transform:translateY(-3px);border-color:color-mix(in srgb,var(--brand) 62%,transparent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--brand) 26%,transparent),0 14px 36px -16px rgba(13,103,240,.6)}
+@media (prefers-reduced-motion:no-preference){.lpx .tl-card-lit::after{animation:fx-sheen 1.3s ease .1s 1 both}}
+
+/* ---- Ícones: brilho que respira algumas vezes ao entrar na tela, e giro leve no hover ----
+   (finito de propósito: loops contínuos em dezenas de ícones custam camada e CPU; os loops contínuos ficam só em poucos
+   elementos: ponto da linha do tempo, ilustrações dos dois modelos e o brilho dos botões) */
+.lpx .fx-icon{isolation:isolate}
+.lpx .fx-icon::before{content:"";position:absolute;inset:-8px;border-radius:inherit;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(13,103,240,.5),transparent 70%);opacity:0}
+.lpx .fx-icon svg{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+@media (hover:hover){.lpx .fx-card:hover .fx-icon svg{transform:rotate(-8deg) scale(1.12)}}
+
+@media (prefers-reduced-motion:no-preference){
+  .lpx.rv-ready .rv-in .fx-icon::before,.lpx.rv-ready .rv-in.fx-icon::before{animation:fx-breathe 3.2s ease-in-out calc(.5s + var(--i,0) * 75ms) 2}
+  /* Rótulos e "Etapa N": o brilho passa duas vezes ao entrar na tela */
+  .lpx .fx-eyebrow{background:linear-gradient(100deg,var(--brand) 0%,var(--brand) 42%,#9cc4ff 50%,var(--brand) 58%,var(--brand) 100%);
+    background-size:260% 100%;background-position:120% 0;-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lpx.rv-ready .rv-in .fx-eyebrow,.lpx.rv-ready .rv-in.fx-eyebrow{animation:fx-sweep 2.6s ease-in-out .5s 2}
+  /* Sem a seção visível (rv-live) NÃO há animação nenhuma (nem pausada). */
+  .lpx .rv-live .fx-float{animation:fx-float 6s ease-in-out infinite}
+  .lpx .tl-dot-lit::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--brand);opacity:0}
+  .lpx .rv-live .tl-dot-lit::after{animation:tl-ping 2.8s ease-out infinite}
+  /* Botões com brilho que percorre: o loop do ShimmerButton só roda com a seção visível */
+  .lpx section:not(.rv-live) .animate-shimmer-slide,.lpx section:not(.rv-live) .animate-spin-around{animation-play-state:paused}
+}
+@keyframes fx-breathe{0%,100%{opacity:.12;transform:scale(.9)}50%{opacity:.6;transform:scale(1.14)}}
+@keyframes fx-sweep{0%{background-position:120% 0}100%{background-position:-60% 0}}
+@keyframes fx-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes tl-ping{0%{opacity:.75;transform:scale(.8)}100%{opacity:0;transform:scale(2.4)}}
+@media (prefers-reduced-motion:reduce){.lpx .fx-eyebrow{background:none;color:var(--brand)}}
+
+/* ---- Botões de CTA (ShimmerButton): brilho no hover, mesmo padrão no formulário ---- */
+.lpx .fx-cta{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
+@media (hover:hover){
+  .lpx .fx-cta:hover{transform:translateY(-2px) scale(1.035);box-shadow:0 0 30px -6px rgba(13,103,240,.7)}
+}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .lpx .fx-cta:hover{animation:fx-cta-pulse 1.6s ease-in-out infinite}
+}
+@keyframes fx-cta-pulse{0%,100%{box-shadow:0 0 22px -8px rgba(13,103,240,.55)}50%{box-shadow:0 0 36px -4px rgba(13,103,240,.85)}}
+/* Hero: foco dos campos com brilho suave (nada que atrapalhe preencher) */
+.lpx .hs-form input,.lpx .hs-form [role=combobox]{transition:border-color .25s ease,box-shadow .25s ease}
+.lpx .hs-form input:focus-visible,.lpx .hs-form [role=combobox]:focus-visible{border-color:var(--brand);box-shadow:0 0 0 3px rgba(13,103,240,.22),0 0 18px -2px rgba(13,103,240,.45)}
+
+/* ---- FAQ: linha com destaque suave; o "+" já gira e a altura já anima (motion) ---- */
+.lpx .fx-faq>div{transition:background-color .3s ease}
+@media (hover:hover){.lpx .fx-faq>div:hover{background-color:rgba(13,103,240,.07)}}

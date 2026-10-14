@@ -7,8 +7,8 @@ export function EcomFooter() {
   if (PRIVACY_URL) links.push({ label: ECOM_FOOTER.privacy, href: PRIVACY_URL });
   if (CONTACT_URL) links.push({ label: ECOM_FOOTER.contact, href: CONTACT_URL });
   return (
-    <footer className="border-t border-line/60">
-      <div className="mx-auto max-w-6xl px-5 py-8 text-center text-sm text-mute">
+    <footer data-rv-group className="border-t border-line/60">
+      <div data-rv-item className="mx-auto max-w-6xl px-5 py-8 text-center text-sm text-mute">
         <InstagramLink />
         <p>{ECOM_FOOTER.tagline}</p>
         {links.length ? (

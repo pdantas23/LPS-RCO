@@ -6,17 +6,27 @@ import { EcomIcon } from "./EcomIcon";
 /** Sobretítulo + título + apoio, centralizados. Cada seção abre com isto (título em h2). */
 export function SectionHead({ eyebrow, title, support, className }: { eyebrow?: string; title: string; support?: string; className?: string }) {
   return (
-    <div className={cn("mx-auto mb-10 max-w-3xl text-center sm:mb-12", className)}>
-      {eyebrow ? <p className="mb-3 text-sm font-semibold tracking-wide text-brand uppercase">{eyebrow}</p> : null}
-      <h2 className="text-2xl leading-tight font-bold sm:text-3xl">{title}</h2>
-      {support ? <p className="mt-4 text-lg text-mute">{support}</p> : null}
+    <div data-rv-group className={cn("mx-auto mb-10 max-w-3xl text-center sm:mb-12", className)}>
+      {eyebrow ? (
+        <p data-rv-item className="fx-eyebrow mb-3 text-sm font-semibold tracking-wide text-brand uppercase">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h2 data-rv-item className="text-2xl leading-tight font-bold sm:text-3xl">
+        {title}
+      </h2>
+      {support ? (
+        <p data-rv-item className="mt-4 text-lg text-mute">
+          {support}
+        </p>
+      ) : null}
     </div>
   );
 }
 
 export function IconBox({ name }: { name: string }) {
   return (
-    <div className="grid size-12 shrink-0 place-items-center rounded-xl border border-line bg-bg text-brand">
+    <div className="fx-icon grid size-12 shrink-0 place-items-center rounded-xl border border-line bg-bg text-brand">
       <EcomIcon name={name} />
     </div>
   );
@@ -34,12 +44,15 @@ export interface IconCardItem {
  */
 export function IconCards({ items, columns = 3, quote = false }: { items: readonly IconCardItem[]; columns?: 2 | 3; quote?: boolean }) {
   return (
-    <ul className={cn("grid auto-rows-fr gap-4 sm:gap-5", columns === 3 ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2")}>
+    <ul data-rv-group className={cn("grid auto-rows-fr gap-4 sm:gap-5", columns === 3 ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2")}>
       {items.map((item) => (
-        <li key={item.title} className="rounded-2xl border border-line bg-surface p-6">
-          <IconBox name={item.icon} />
-          <h3 className={cn("mt-4 font-bold", quote ? "text-xl leading-snug text-ink" : "text-lg")}>{item.title}</h3>
-          <p className="mt-2 text-mute">{item.text}</p>
+        <li key={item.title} data-rv-item>
+          {/* A entrada ao rolar fica no <li>; o cartão (hover, brilho e reflexo) é o <div>, para os dois efeitos não se atrapalharem. */}
+          <div className="fx-card h-full rounded-2xl border border-line bg-surface p-6">
+            <IconBox name={item.icon} />
+            <h3 className={cn("mt-4 font-bold", quote ? "text-xl leading-snug text-ink" : "text-lg")}>{item.title}</h3>
+            <p className="mt-2 text-mute">{item.text}</p>
+          </div>
         </li>
       ))}
     </ul>
@@ -83,15 +96,17 @@ function DropshipArt() {
 export function TwoModels({ items }: { items: readonly IconCardItem[] }) {
   const arts = [<StockArt key="a" />, <DropshipArt key="b" />];
   return (
-    <div className="grid auto-rows-fr gap-5 md:grid-cols-2">
+    <div data-rv-group className="grid auto-rows-fr gap-5 md:grid-cols-2">
       {items.map((m, i) => (
-        <div key={m.title} className="flex h-full flex-col rounded-2xl border border-line bg-surface p-6 sm:p-8">
+        <div key={m.title} data-rv-item>
+          <div className="fx-card flex h-full flex-col rounded-2xl border border-line bg-surface p-6 sm:p-8">
           <div className="flex items-center gap-4">
             <IconBox name={m.icon} />
             <h3 className="text-xl font-bold">{m.title}</h3>
           </div>
           <p className="mt-4 text-mute">{m.text}</p>
-          <div className="mt-6 flex justify-center">{arts[i]}</div>
+          <div className="fx-float mt-6 flex justify-center">{arts[i]}</div>
+          </div>
         </div>
       ))}
     </div>

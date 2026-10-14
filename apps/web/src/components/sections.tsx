@@ -39,23 +39,35 @@ export function Steps({ steps, icons, eyebrow }: { steps: PageConfig["steps"]; i
   if (items.length === 0) return null;
   return (
     <section className="mx-auto max-w-3xl px-5 pb-10 sm:pb-16">
-      {eyebrow ? <p className="mb-3 text-center text-sm font-semibold tracking-wide text-brand uppercase">{eyebrow}</p> : null}
-      <h2 className="mb-3 text-center text-2xl font-bold">{heading}</h2>
-      {subtitle ? <p className="mx-auto max-w-xl text-center text-mute">{subtitle}</p> : null}
+      <div data-rv-group>
+      {eyebrow ? (
+        <p data-rv-item className="fx-eyebrow mb-3 text-center text-sm font-semibold tracking-wide text-brand uppercase">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h2 data-rv-item className="mb-3 text-center text-2xl font-bold">
+        {heading}
+      </h2>
+      {subtitle ? (
+        <p data-rv-item className="mx-auto max-w-xl text-center text-mute">
+          {subtitle}
+        </p>
+      ) : null}
+      </div>
       <div className="mb-10" />
 
       <ol>
         {items.map((s, i) => {
           const isLast = i === items.length - 1;
           return (
-            <li key={s.title} className="relative flex gap-5">
+            <li key={s.title} data-rv-group data-rv-item className="relative flex gap-5">
               {/* Linha vertical ligando esta caixa à próxima (não depois da
                   última). `top-14` = pula a caixa do ícone (size-14); a
                   altura cobre o resto do espaço até o próximo ícone. */}
               {!isLast && (
                 <span aria-hidden="true" className="absolute top-14 bottom-0 left-7 w-px -translate-x-1/2 bg-line" />
               )}
-              <div className="relative z-10 grid size-14 shrink-0 place-items-center rounded-xl border border-line bg-bg">
+              <div className="fx-icon relative z-10 grid size-14 shrink-0 place-items-center rounded-xl border border-line bg-bg">
                 <StepIcon index={i} icons={icons} />
               </div>
               <div className={isLast ? "pt-2.5" : "pt-2.5 pb-10"}>

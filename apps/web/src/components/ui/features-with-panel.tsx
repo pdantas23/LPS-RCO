@@ -50,7 +50,7 @@ function FeatureMedia({ content, alt }: { content: string | React.ReactNode; alt
   );
 }
 
-export function FeaturesWithPanel({ heading, items }: { heading?: string; items: FeatureItem[] }) {
+export function FeaturesWithPanel({ heading, items, glow = false }: { heading?: string; items: FeatureItem[]; glow?: boolean }) {
   const [active, setActive] = React.useState(0);
   const activeItem = items[active];
   if (!activeItem) return null;
@@ -72,7 +72,7 @@ export function FeaturesWithPanel({ heading, items }: { heading?: string; items:
                 onClick={() => setActive(index)}
                 className={cn(
                   "flex cursor-pointer flex-col rounded-xl px-4 py-3.5 transition-all duration-200 lg:flex-row lg:items-center lg:gap-4",
-                  active === index ? "ring-1 ring-brand" : "ring-1 ring-transparent",
+                  active === index ? (glow ? "ring-1 ring-brand shadow-[0_0_26px_-8px_rgba(13,103,240,.75)]" : "ring-1 ring-brand") : "ring-1 ring-transparent",
                 )}
               >
                 <div className="flex w-full flex-row items-center gap-4 lg:contents">
@@ -113,7 +113,7 @@ export function FeaturesWithPanel({ heading, items }: { heading?: string; items:
         </div>
 
         <div className="sticky top-10 hidden lg:block">
-          <Card className="relative aspect-4/3 w-full gap-0 overflow-hidden p-0">
+          <Card className={cn("relative aspect-4/3 w-full gap-0 overflow-hidden p-0 transition-shadow duration-500", glow && "shadow-[0_0_44px_-14px_rgba(13,103,240,.7)]")}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}

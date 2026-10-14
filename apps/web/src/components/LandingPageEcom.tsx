@@ -3,6 +3,7 @@ import {
   ECOM_OBJECTIONS, ECOM_PAINS, ECOM_PROOF, ECOM_SERVICE, PROOF_CASES, SHOW_PROOF_SECTION,
 } from "@/content/ecom";
 import { EcomFooter } from "./EcomFooter";
+import { EcomMotion } from "./EcomMotion";
 import { EcomPageBackground } from "./EcomPageBackground";
 import { EcomHeroHeadlines } from "./EcomHeroHeadlines";
 import { EcomHeroStory } from "./EcomHeroStory";
@@ -33,8 +34,9 @@ const SECTION = `${WRAP} py-12 sm:py-16`;
  */
 export function LandingPageEcom() {
   return (
-    <main id="topo" className="relative">
+    <main id="topo" className="lpx relative">
       <EcomPageBackground />
+      <EcomMotion />
       <div className="relative">
         {/* ---------- 03 Hero ----------
             O fundo animado cobre o hero inteiro (EcomHeroStory). Em cima, só o logo centralizado (sem menu). No primeiro plano,
@@ -79,14 +81,17 @@ export function LandingPageEcom() {
               description: s.text,
               icon: <EcomIcon name={s.icon} className="size-5" />,
             }))}
-            footer={<p className="mx-auto mt-10 max-w-2xl text-center text-lg">{ECOM_FLOW.closing}</p>}
+            footer={<p data-rv-item className="mx-auto mt-10 max-w-2xl text-center text-lg">{ECOM_FLOW.closing}</p>}
           />
         </section>
 
         {/* ---------- 06 O que a RCO faz (FeaturesWithPanel, o painel clicável da P05) ---------- */}
         <section className={SECTION}>
           <SectionHead eyebrow={ECOM_SERVICE.eyebrow} title={ECOM_SERVICE.title} support={ECOM_SERVICE.support} />
+          <div data-rv-group>
+            <div data-rv-item>
           <FeaturesWithPanel
+            glow
             items={ECOM_SERVICE.items.map((s) => ({
               title: s.title,
               content: (
@@ -97,8 +102,12 @@ export function LandingPageEcom() {
               ),
             }))}
           />
-          <div className="mt-10 flex justify-center">
-            <HeroCta label={ECOM_SERVICE.cta} targetSelector={FORM} page={PAGE} location="servico" width={380} className="max-w-full text-sm sm:text-base" />
+            </div>
+          </div>
+          <div data-rv-group className="mt-10 flex justify-center">
+            <div data-rv-item>
+              <HeroCta label={ECOM_SERVICE.cta} targetSelector={FORM} page={PAGE} location="servico" width={380} className="fx-cta max-w-full text-sm sm:text-base" />
+            </div>
           </div>
         </section>
 
@@ -112,14 +121,14 @@ export function LandingPageEcom() {
         <section id={ECOM_ANCHORS.models} className={`${SECTION} scroll-mt-6`}>
           <SectionHead eyebrow={ECOM_MODELS.eyebrow} title={ECOM_MODELS.title} />
           <TwoModels items={ECOM_MODELS.items} />
-          <p className="mx-auto mt-8 max-w-2xl text-center text-lg">{ECOM_MODELS.closing}</p>
+          <p data-rv-group data-rv-item className="mx-auto mt-8 max-w-2xl text-center text-lg">{ECOM_MODELS.closing}</p>
         </section>
 
         {/* ---------- 09 Indicadores ---------- */}
         <section id={ECOM_ANCHORS.indicators} className={`${SECTION} scroll-mt-6`}>
           <SectionHead eyebrow={ECOM_INDICATORS.eyebrow} title={ECOM_INDICATORS.title} support={ECOM_INDICATORS.support} />
           <IconCards items={ECOM_INDICATORS.items} />
-          <p className="mx-auto mt-8 max-w-2xl text-center text-mute">{ECOM_INDICATORS.note}</p>
+          <p data-rv-group data-rv-item className="mx-auto mt-8 max-w-2xl text-center text-mute">{ECOM_INDICATORS.note}</p>
         </section>
 
         {/* ---------- 10 Como trabalhamos (Steps, o "Como funciona" da P05/P04) ---------- */}
@@ -170,13 +179,13 @@ export function LandingPageEcom() {
 
         {/* ---------- 15 Fechamento e rodapé (sobre o fundo único da página) ---------- */}
         <section>
-          <div className="mx-auto max-w-3xl px-5 py-14 text-center sm:py-20">
-            <h2 className="text-2xl leading-tight font-bold sm:text-3xl">{ECOM_CLOSING.headline}</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-mute">{ECOM_CLOSING.text}</p>
-            <div className="mt-8 flex justify-center">
-              <HeroCta label={ECOM_CLOSING.cta} targetSelector={FORM} page={PAGE} location="fechamento" width={320} className="max-w-full text-sm sm:text-base" />
+          <div data-rv-group className="mx-auto max-w-3xl px-5 py-14 text-center sm:py-20">
+            <h2 data-rv-item className="text-2xl leading-tight font-bold sm:text-3xl">{ECOM_CLOSING.headline}</h2>
+            <p data-rv-item className="mx-auto mt-4 max-w-2xl text-lg text-mute">{ECOM_CLOSING.text}</p>
+            <div data-rv-item className="mt-8 flex justify-center">
+              <HeroCta label={ECOM_CLOSING.cta} targetSelector={FORM} page={PAGE} location="fechamento" width={320} className="fx-cta max-w-full text-sm sm:text-base" />
             </div>
-            <p className="mt-4 text-sm text-mute">{ECOM_CLOSING.microtext}</p>
+            <p data-rv-item className="mt-4 text-sm text-mute">{ECOM_CLOSING.microtext}</p>
           </div>
         </section>
         <EcomFooter />
