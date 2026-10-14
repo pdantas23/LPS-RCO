@@ -15,11 +15,11 @@ const WHATSAPP_ICON = BRAND_ICONS.find((icon) => icon.slug === "whatsapp")!;
  *  aqui, cai num genérico em vez de quebrar. */
 const STEP_ICONS = [ClipboardList, null, Rocket] as const;
 
-function StepIcon({ index, icons = STEP_ICONS }: { index: number; icons?: readonly (LucideIcon | null)[] }) {
+function StepIcon({ index, icons = STEP_ICONS, bare = false }: { index: number; icons?: readonly (LucideIcon | null)[]; bare?: boolean }) {
   const Icon = icons[index];
   if (Icon === null) return <BrandIcon icon={WHATSAPP_ICON} size={24} />;
   const Fallback = Icon ?? CircleDot;
-  return <Fallback aria-hidden="true" className="size-6 text-ink" />;
+  return <Fallback aria-hidden="true" className={bare ? "size-7 text-brand" : "size-6 text-ink"} />;
 }
 
 export function Benefits() {
@@ -34,7 +34,8 @@ export function Benefits() {
   );
 }
 
-export function Steps({ steps, icons, eyebrow }: { steps: PageConfig["steps"]; icons?: readonly (LucideIcon | null)[]; eyebrow?: string }) {
+/** `bare`: ícone sem moldura com borda (só o ícone, na cor da marca). Usado na /lp-ecom; as outras LPs mantêm a moldura. */
+export function Steps({ steps, icons, eyebrow, bare = false }: { steps: PageConfig["steps"]; icons?: readonly (LucideIcon | null)[]; eyebrow?: string; bare?: boolean }) {
   const { heading, subtitle, items } = steps;
   if (items.length === 0) return null;
   return (
@@ -67,8 +68,8 @@ export function Steps({ steps, icons, eyebrow }: { steps: PageConfig["steps"]; i
               {!isLast && (
                 <span aria-hidden="true" className="absolute top-14 bottom-0 left-7 w-px -translate-x-1/2 bg-line" />
               )}
-              <div className="fx-icon relative z-10 grid size-14 shrink-0 place-items-center rounded-xl border border-line bg-bg">
-                <StepIcon index={i} icons={icons} />
+              <div className={bare ? "fx-icon relative z-10 grid size-14 shrink-0 place-items-center" : "fx-icon relative z-10 grid size-14 shrink-0 place-items-center rounded-xl border border-line bg-bg"}>
+                <StepIcon index={i} icons={icons} bare={bare} />
               </div>
               <div className={isLast ? "pt-2.5" : "pt-2.5 pb-10"}>
                 <h3 className="text-lg font-bold">{s.title}</h3>

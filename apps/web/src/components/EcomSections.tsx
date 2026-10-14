@@ -26,8 +26,8 @@ export function SectionHead({ eyebrow, title, support, className }: { eyebrow?: 
 
 export function IconBox({ name }: { name: string }) {
   return (
-    <div className="fx-icon grid size-12 shrink-0 place-items-center rounded-xl border border-line bg-bg text-(--tone)">
-      <EcomIcon name={name} />
+    <div className="fx-icon grid size-12 shrink-0 place-items-center text-(--tone)">
+      <EcomIcon name={name} className="size-8" />
     </div>
   );
 }

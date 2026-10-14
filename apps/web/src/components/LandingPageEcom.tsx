@@ -135,6 +135,7 @@ export function LandingPageEcom() {
         {/* ---------- 10 Como trabalhamos (Steps, o "Como funciona" da P05/P04) ---------- */}
         <div id={ECOM_ANCHORS.method} className="scroll-mt-6 pt-6">
           <Steps
+            bare
             eyebrow={ECOM_METHOD.eyebrow}
             steps={{ heading: ECOM_METHOD.title, subtitle: "", items: ECOM_METHOD.items.map((i) => ({ ...i })) }}
             icons={ECOM_METHOD.icons.map(iconOf)}
@@ -167,6 +168,7 @@ export function LandingPageEcom() {
         {/* ---------- 13 Próximos passos (Steps) ---------- */}
         <div className="pt-6">
           <Steps
+            bare
             eyebrow={ECOM_NEXT.eyebrow}
             steps={{ heading: ECOM_NEXT.title, subtitle: "", items: ECOM_NEXT.items.map((i) => ({ ...i })) }}
             icons={ECOM_NEXT.icons.map(iconOf)}

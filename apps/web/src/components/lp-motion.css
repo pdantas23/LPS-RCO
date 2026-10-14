@@ -48,7 +48,7 @@
    (finito de propósito: loops contínuos em dezenas de ícones custam camada e CPU; os loops contínuos ficam só em poucos
    elementos: ponto da linha do tempo, ilustrações dos dois modelos e o brilho dos botões) */
 .lpx .fx-icon{isolation:isolate}
-.lpx .fx-icon::before{content:"";position:absolute;inset:-8px;border-radius:inherit;z-index:-1;pointer-events:none;
+.lpx .fx-icon::before{content:"";position:absolute;inset:-8px;border-radius:50%;z-index:-1;pointer-events:none;
   background:radial-gradient(circle,color-mix(in srgb,var(--tone) 50%,transparent),transparent 70%);opacity:0}
 .lpx .fx-icon svg{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
 @media (hover:hover){.lpx .fx-card:hover .fx-icon svg{transform:rotate(-8deg) scale(1.12)}}

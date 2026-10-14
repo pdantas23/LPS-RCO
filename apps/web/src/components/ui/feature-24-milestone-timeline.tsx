@@ -53,7 +53,7 @@ function Card({ item, measureLabel, lit }: { item: TimelineItem; measureLabel: s
     <div className={cn("fx-card rounded-2xl border border-line bg-surface p-4 text-left shadow-sm md:p-6", lit && "tl-card-lit")}>
       <div className="flex items-center gap-3">
         {item.icon ? (
-          <span className="fx-icon grid size-10 shrink-0 place-items-center rounded-full border border-line bg-bg text-brand">{item.icon}</span>
+          <span className="fx-icon grid size-9 shrink-0 place-items-center text-brand">{item.icon}</span>
         ) : null}
         <span className="fx-eyebrow text-sm font-bold text-brand">{item.tag}</span>
       </div>

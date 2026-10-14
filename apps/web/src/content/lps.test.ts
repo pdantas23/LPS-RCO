@@ -191,6 +191,12 @@ describe("/lp-ecom: GridFeatureCards e cores por seção", () => {
     expect(patternFor("Visita entra, pedido não aparece")).toEqual(a);
     expect(patternFor("Outro título")).not.toEqual(a);
     expect(a).toHaveLength(5);
+    // sem quadrados repetidos, para qualquer título (keys únicas no React)
+    for (const t of ["Visita entra, pedido não aparece", "Carrinhos que não viram pedidos", "Checkouts que param no meio", "O anúncio vende, mas a margem aperta", "Dependência de um só criativo", "Relatórios sem decisão clara", "Visitas e custo do tráfego", "Adições ao carrinho", "Inícios de checkout", "Compras e custo por compra", "Ticket médio e receita", "ROAS e leitura de margem", ...Array.from({ length: 300 }, (_, i) => `título ${i}`)]) {
+      const p = patternFor(t);
+      expect(p, t).toHaveLength(5);
+      expect(new Set(p.map(([x, y]) => `${x}-${y}`)).size, t).toBe(5);
+    }
     for (const [x, y] of a) {
       expect(x).toBeGreaterThanOrEqual(7);
       expect(x).toBeLessThanOrEqual(10);
@@ -211,5 +217,19 @@ describe("/lp-ecom: GridFeatureCards e cores por seção", () => {
     const page = fs.readFileSync(path.join(dir, "LandingPageEcom.tsx"), "utf8");
     for (const t of ["tone-amber", "tone-violet", "tone-green"]) expect(page).toContain(t);
     expect(page).not.toContain("<IconCards");
+  });
+});
+
+describe("/lp-ecom: ícones sem moldura com borda", () => {
+  it("IconBox, cartões da linha do tempo e passos (na /lp-ecom) mostram só o ícone", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.resolve(__dirname, "../components");
+    const box = fs.readFileSync(path.join(dir, "EcomSections.tsx"), "utf8").match(/export function IconBox[\s\S]*?\n}\n/)![0];
+    expect(box).not.toMatch(/border|bg-bg|rounded/);
+    const tl = fs.readFileSync(path.join(dir, "ui/feature-24-milestone-timeline.tsx"), "utf8");
+    expect(tl).not.toMatch(/fx-icon[^"]*(border|rounded-full)/);
+    const page = fs.readFileSync(path.join(dir, "LandingPageEcom.tsx"), "utf8");
+    expect((page.match(/<Steps\n\s+bare/g) ?? []).length).toBe(2);
   });
 });

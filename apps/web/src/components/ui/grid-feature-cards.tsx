@@ -39,7 +39,18 @@ function hash(s: string) {
 /** 5 quadrados [x de 7 a 10, y de 1 a 6], sempre os mesmos para o mesmo título. */
 export function patternFor(title: string, n = 5): [number, number][] {
   const rnd = seeded(hash(title));
-  return Array.from({ length: n }, () => [Math.floor(rnd() * 4) + 7, Math.floor(rnd() * 6) + 1] as [number, number]);
+  const seen = new Set<string>();
+  const out: [number, number][] = [];
+  // Sem quadrados repetidos (a mesma posição duas vezes). A faixa tem 4 x 6 = 24 posições, então n <= 24 sempre fecha.
+  for (let guard = 0; out.length < Math.min(n, 24) && guard < 500; guard++) {
+    const p: [number, number] = [Math.floor(rnd() * 4) + 7, Math.floor(rnd() * 6) + 1];
+    const k = `${p[0]}-${p[1]}`;
+    if (!seen.has(k)) {
+      seen.add(k);
+      out.push(p);
+    }
+  }
+  return out;
 }
 
 function GridPattern({ squares }: { squares: [number, number][] }) {
@@ -54,8 +65,8 @@ function GridPattern({ squares }: { squares: [number, number][] }) {
       </defs>
       <rect width="100%" height="100%" strokeWidth={0} fill={`url(#${id})`} />
       <svg x={-12} y={4} className="overflow-visible" style={{ fill: "color-mix(in srgb, var(--tone) 24%, transparent)" }}>
-        {squares.map(([x, y]) => (
-          <rect key={`${x}-${y}`} strokeWidth="0" width={size + 1} height={size + 1} x={x * size} y={y * size} />
+        {squares.map(([x, y], i) => (
+          <rect key={`${i}:${x}-${y}`} strokeWidth="0" width={size + 1} height={size + 1} x={x * size} y={y * size} />
         ))}
       </svg>
     </svg>
