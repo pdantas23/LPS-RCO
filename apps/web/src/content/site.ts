@@ -23,6 +23,8 @@ export const LP01_ATIVA = true;
 export const LP02_ATIVA = false;
 /** /lp-ecom = LP de e-commerce (content/ecom.ts). */
 export const LP_ECOM_ATIVA = true;
+/** /sites (LP de venda de sites, briefing do Luis v2.2) e o quiz em /sites/quiz. Conteúdo em content/sites.ts e content/captura/sites.ts. */
+export const SITES_ATIVA = true;
 
 /** Container do Google Tag Manager. Vazio = GTM não é carregado. Constante (não env) de propósito: ver o topo do arquivo. */
 export const GTM_ID = "GTM-P9XNXV2B";

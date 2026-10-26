@@ -25,6 +25,8 @@ export function UtmCapture() {
     const id = pageIdOfPath(pathname);
     // LP desligada (404): não conta visita. Rota fora das LPs: "other".
     if (id && !isPageIdActive(id)) return;
+    // /sites e /sites/quiz disparam o próprio page_view, com a versão da captura (components/sites).
+    if (id === "SITES") return;
     track("page_view", { page_id: id ?? "other", page_path: pathname, ...readTracking() });
   }, [pathname]);
   return null;

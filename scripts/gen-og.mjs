@@ -7,8 +7,11 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const chrome = process.env.CHROME ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const tpl = path.join(root, "scripts/og/template.html");
-const jobs = { form: "form.png", lp: "lp.png", ecom: "ecom.png" };
+const jobs = { form: "form.png", lp: "lp.png", ecom: "ecom.png", sites: "sites.png" };
+// Só uma: node scripts/gen-og.mjs sites
+const only = process.argv[2];
 for (const [v, out] of Object.entries(jobs)) {
+  if (only && only !== v) continue;
   const r = spawnSync(chrome, [
     "--headless=new", "--disable-gpu", "--hide-scrollbars", "--allow-file-access-from-files",
     "--window-size=1200,630", "--virtual-time-budget=8000",

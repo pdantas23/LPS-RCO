@@ -1,0 +1,409 @@
+/* ============================================================
+   /sites e /sites/quiz. Classes com prefixo sx- (não colidem com hs-/rv- das outras LPs).
+   Aparelhos (notebook e celular) copiados do projeto do portfólio (portfolio/src/app/globals.css), adaptados:
+   só transform e opacity nas animações; loops só com o palco visível (.is-live); reduced-motion para tudo.
+   ============================================================ */
+
+.sx {
+  --sx-accent: #2878f6;
+  --sx-accent-hover: #1f66d6;
+}
+
+/* ---------- Entrada ao rolar (HTML do servidor chega visível; só esconde depois do rv-ready) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .sx.rv-ready [data-sx-rv]:not(.rv-in) {
+    opacity: 0;
+  }
+  .sx.rv-ready [data-sx-rv].rv-in {
+    animation: sx-reveal 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * 90ms) backwards;
+  }
+  .sx-word {
+    display: inline-block;
+    animation: sx-word 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(120ms + var(--w, 0) * 40ms) both;
+  }
+  .sx-fade {
+    animation: sx-reveal 1s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0.5s) both;
+  }
+}
+@keyframes sx-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sx-word {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Celular 3D (1em = largura / 400) ---------- */
+.sx-phone {
+  container-type: inline-size;
+}
+.sx-phone-scale {
+  font-size: 0.25cqw;
+  width: 400em;
+  height: 820em;
+  position: relative;
+}
+.sx-phone-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 66em;
+  background: linear-gradient(135deg, #7a8399 0%, #3a4153 18%, #1d2231 50%, #2d3446 80%, #6b748a 100%);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.18),
+    0 40em 80em -10em rgba(2, 8, 30, 0.6);
+}
+.sx-phone-bezel {
+  position: absolute;
+  inset: 5em;
+  border-radius: 61em;
+  background: #04060b;
+}
+.sx-phone-screen {
+  position: absolute;
+  left: 14em;
+  top: 14em;
+  width: 372em;
+  height: 792em;
+  border-radius: 53em;
+  overflow: hidden;
+  background: #fff;
+}
+.sx-phone-status {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 54em;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6em 30em 0 40em;
+}
+.sx-phone-status b {
+  font-size: 15em;
+  font-weight: 600;
+}
+.sx-phone-status svg {
+  width: 62em;
+  height: 14em;
+}
+.sx-phone-shot {
+  position: absolute;
+  left: 0;
+  top: 54em;
+  width: 100%;
+  height: auto;
+  display: block;
+  animation: sx-browse 34s ease-in-out infinite;
+  animation-play-state: paused;
+}
+.is-live .sx-phone-shot {
+  animation-play-state: running;
+}
+.sx-phone-island {
+  position: absolute;
+  left: 142em;
+  top: 26em;
+  width: 116em;
+  height: 34em;
+  border-radius: 18em;
+  background: #000;
+  z-index: 5;
+}
+.sx-phone-glass {
+  position: absolute;
+  left: 14em;
+  top: 14em;
+  width: 372em;
+  height: 792em;
+  border-radius: 53em;
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(245deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 40%);
+}
+@keyframes sx-browse {
+  0%,
+  8% {
+    transform: translateY(0);
+  }
+  22%,
+  30% {
+    transform: translateY(calc(var(--travel) * 0.3));
+  }
+  44%,
+  52% {
+    transform: translateY(calc(var(--travel) * 0.62));
+  }
+  66%,
+  74% {
+    transform: translateY(var(--travel));
+  }
+  92%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Notebook ---------- */
+.sx-laptop-lid {
+  position: relative;
+  width: 84%;
+  margin: 0 auto;
+  aspect-ratio: 16 / 10.4;
+  border-radius: 2.2% / 3.4%;
+  background: linear-gradient(180deg, #2a3142, #141924);
+  padding: 0.45%;
+  transform-origin: 50% 100%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.sx-laptop-bezel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.9% / 3%;
+  background: #04060b;
+  padding: 2.6% 2.2% 3.4%;
+}
+.sx-laptop-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0.5%;
+  background: #0b1531;
+}
+.sx-laptop-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+.sx-laptop-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(200deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 35%);
+}
+.sx-laptop-base {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 2.6%;
+  margin-top: -0.2%;
+  border-radius: 0 0 40% 40% / 0 0 100% 100%;
+  background: linear-gradient(180deg, #8b93a7 0%, #5a6278 30%, #2a3142 100%);
+  box-shadow: 0 30px 60px -20px rgba(2, 8, 30, 0.7);
+}
+
+/* ---------- Palco do topo: notebook atrás, três celulares na frente (medidas em cqw do palco) ---------- */
+.sx-stage {
+  position: relative;
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  aspect-ratio: 100 / 58;
+  container-type: inline-size;
+  perspective: 1600px;
+  pointer-events: none;
+  user-select: none;
+}
+.sx-glow {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 115%;
+  aspect-ratio: 2 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(40, 120, 246, 0.55), rgba(40, 120, 246, 0.16) 55%, rgba(40, 120, 246, 0) 100%);
+}
+.sx-layer {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+.sx-l-laptop {
+  left: 10cqw;
+  top: 0;
+  width: 80cqw;
+}
+.sx-l-phone {
+  width: var(--w);
+}
+.sx-p0 {
+  --w: 11cqw;
+  left: 25cqw;
+  top: 23cqw;
+}
+.sx-p0 .sx-tilt {
+  transform: rotate(-7deg) rotateY(16deg);
+}
+.sx-p1 {
+  --w: 14cqw;
+  left: 43cqw;
+  top: 27cqw;
+}
+.sx-p1 .sx-tilt {
+  transform: rotateY(-6deg);
+}
+.sx-p2 {
+  --w: 11cqw;
+  left: 64cqw;
+  top: 22cqw;
+}
+.sx-p2 .sx-tilt {
+  transform: rotate(6deg) rotateY(-16deg);
+}
+.sx-tilt,
+.sx-in,
+.sx-float {
+  transform-style: preserve-3d;
+}
+@media (max-width: 640px) {
+  .sx-stage {
+    aspect-ratio: 100 / 92;
+  }
+  .sx-l-laptop {
+    left: 0;
+    width: 100cqw;
+  }
+  .sx-laptop-lid {
+    width: 92%;
+  }
+  .sx-p0 {
+    --w: 21cqw;
+    left: 4cqw;
+    top: 34cqw;
+  }
+  .sx-p1 {
+    --w: 25cqw;
+    left: 37.5cqw;
+    top: 40cqw;
+  }
+  .sx-p2 {
+    --w: 21cqw;
+    left: 75cqw;
+    top: 31cqw;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sx-l-laptop > .sx-in {
+    animation: sx-rise 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
+  }
+  .sx-stage .sx-laptop-lid {
+    animation: sx-lid 1.3s cubic-bezier(0.3, 0.7, 0.2, 1) 0.55s both;
+  }
+  .sx-l-phone > .sx-tilt > .sx-in {
+    animation: sx-pop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) var(--delay) both;
+  }
+  .sx-p0 {
+    --delay: 1.2s;
+  }
+  .sx-p2 {
+    --delay: 1.4s;
+  }
+  .sx-p1 {
+    --delay: 1.6s;
+  }
+  .sx-float {
+    animation: sx-float var(--fd, 7s) ease-in-out 3s infinite;
+    animation-play-state: paused;
+  }
+  .sx-stage.is-live .sx-float {
+    animation-play-state: running;
+  }
+  .sx-l-laptop .sx-float {
+    --fd: 9s;
+    --amp: -0.35cqw;
+  }
+  .sx-p0 .sx-float {
+    --fd: 6.4s;
+  }
+  .sx-p2 .sx-float {
+    --fd: 7.6s;
+  }
+  .sx-p1 .sx-float {
+    --fd: 5.8s;
+  }
+}
+@keyframes sx-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8cqw);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sx-lid {
+  from {
+    transform: rotateX(-82deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sx-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10cqw) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sx-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--amp, -0.9cqw));
+  }
+}
+
+/* ---------- Cartões do portfólio ---------- */
+.sx-card-shot {
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (hover: hover) {
+  .sx-card:hover .sx-card-shot {
+    transform: scale(1.03);
+  }
+}
+
+/* ---------- Botão fixo ---------- */
+.sx-fixed {
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.35s ease;
+}
+.sx-fixed[data-on="false"] {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-phone-shot,
+  .sx-float {
+    animation: none !important;
+  }
+  .sx-card-shot,
+  .sx-fixed {
+    transition: none;
+  }
+}

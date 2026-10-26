@@ -340,3 +340,110 @@ describe("POST /api/lead — /lp-ecom (ECOM)", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("POST /api/lead — /sites (SITES), captura configurável", () => {
+  const curto = {
+    nome: "Ana Lima",
+    tipo: "Clínica ou saúde",
+    necessidade: "Página de captura de leads",
+    desafio: "Perco cliente quando pedem meu site e não tenho o que mostrar",
+    anuncios: "Estou com uma agência ou gestor agora",
+    prazo: "Pra ontem, o quanto antes",
+    faturamento: "De R$ 70.000 até R$ 100.000",
+    whatsapp: "(86) 99999-1234",
+    instagram: "@ClinicaAna",
+  };
+  const sites = (over: Record<string, unknown> = {}) => ({
+    respondentId: crypto.randomUUID(),
+    page: "SITES",
+    versao: "quiz_curto",
+    respostas: curto,
+    website: "",
+    tracking: { utm_source: "meta", gclid: "g1", fbclid: "fb1", ignorado: "x" },
+    ...over,
+  });
+
+  it("grava com os campos do bloco 10, perfil calculado no servidor (exemplo do bloco 6 = A) e devolve o perfil", async () => {
+    const b = sites();
+    const res = await handleLeadRequest(post(b), deps());
+    expect(res.status).toBe(200);
+    expect(await json(res)).toEqual({ ok: true, id: b.respondentId, perfil: "A" });
+    const item = outbox.get(b.respondentId as string)!;
+    expect(item.page).toBe("SITES");
+    expect(item.payload.form).toEqual({ form_id: "lp-sites", form_name: "LP Sites" });
+    expect(item.payload.respondent.answers).toEqual({
+      Nome: "Ana Lima",
+      WhatsApp: "5586999991234",
+      Instagram: "@clinicaana",
+      "Página de origem": "SITES",
+      "Versão da captura": "quiz_curto",
+      "Tipo de negócio": "Clínica ou saúde",
+      Necessidade: "Página de captura de leads",
+      Desafio: "Perco cliente quando pedem meu site e não tenho o que mostrar",
+      Anúncio: "Estou com uma agência ou gestor agora",
+      Prazo: "Pra ontem, o quanto antes",
+      Faturamento: "De R$ 70.000 até R$ 100.000",
+      Perfil: "A",
+      utm_source: "meta",
+      gclid: "g1",
+      fbclid: "fb1",
+    });
+  });
+
+  it("o perfil nunca vem do navegador; exemplo do bloco 8 (total 4) = B", async () => {
+    const b = sites({
+      perfil: "A",
+      respostas: { ...curto, faturamento: "De R$ 30.000 até R$ 50.000", anuncios: "Já contratei uma agência no passado", Perfil: "A" },
+    });
+    const res = await handleLeadRequest(post(b), deps());
+    expect((await json(res)).perfil).toBe("B");
+    expect(outbox.get(b.respondentId as string)!.payload.respondent.answers.Perfil).toBe("B");
+  });
+
+  it("caminho longo: ramo, funcionários e e-mail vão; resposta de ramo que não vale é descartada", async () => {
+    const b = sites({
+      versao: "quiz_longo",
+      respostas: { ...curto, site_atual: "Não tenho", oferta: "Tenho a oferta, falta o anúncio", produtos: "Até 20", funcionarios: "Somente eu", email: "ana@clinica.com.br" },
+    });
+    expect((await handleLeadRequest(post(b), deps())).status).toBe(200);
+    const a = outbox.get(b.respondentId as string)!.payload.respondent.answers;
+    expect(a).toMatchObject({ "Versão da captura": "quiz_longo", "Já tem site": "Não tenho", "Oferta e anúncio": "Tenho a oferta, falta o anúncio", Funcionários: "Somente eu", Email: "ana@clinica.com.br" });
+    expect(a).not.toHaveProperty("Quantidade de produtos");
+  });
+
+  it("422 por tela: longo sem o ramo, opção inventada, @ inválido ou versão desconhecida; nada gravado", async () => {
+    const casos = [
+      sites({ versao: "quiz_longo", respostas: { ...curto, site_atual: "Não tenho", funcionarios: "Somente eu" } }),
+      sites({ respostas: { ...curto, prazo: "Amanhã" } }),
+      sites({ respostas: { ...curto, instagram: "rco hub" } }),
+      sites({ versao: "quiz_medio" }),
+    ];
+    const campos: string[] = [];
+    for (const b of casos) {
+      const res = await handleLeadRequest(post(b), deps());
+      expect(res.status).toBe(422);
+      campos.push(Object.keys(((await json(res)).errors as Record<string, string>) ?? {}).join(","));
+      expect(outbox.get(b.respondentId as string)).toBeNull();
+    }
+    expect(campos).toEqual(["oferta", "prazo", "instagram", "versao"]);
+  });
+
+  it("sem token do SITES o lead fica pendente na fila (transporte falso: nada sai para o COMERCIAL real)", async () => {
+    const send = vi.fn(async (): Promise<CrmResult> => ({ kind: "retry", reason: "COMERCIAL_LEAD_TOKEN_SITES não configurado" }));
+    const b = sites();
+    await handleLeadRequest(post(b), deps({ send }));
+    await scheduled[0]!();
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(outbox.statusOf(b.respondentId as string)).toBe("pending");
+    expect(outbox.get(b.respondentId as string)!.lastError).toContain("COMERCIAL_LEAD_TOKEN_SITES");
+  });
+
+  it("reenvio com o mesmo id não duplica e devolve o mesmo perfil; flag SITES_ATIVA=false = 404", async () => {
+    const b = sites();
+    await handleLeadRequest(post(b), deps());
+    const again = await handleLeadRequest(post(b), deps());
+    expect(await json(again)).toMatchObject({ ok: true, duplicate: true, perfil: "A" });
+    const off = await handleLeadRequest(post(sites()), deps({ isPageActive: (id) => id !== "SITES" }));
+    expect(off.status).toBe(404);
+  });
+});

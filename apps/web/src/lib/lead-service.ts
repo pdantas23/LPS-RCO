@@ -1,4 +1,5 @@
 import {
+  buildAnswersRespondiPayload,
   buildEcomRespondiPayload,
   buildRespondiPayload,
   deliverItem,
@@ -11,11 +12,19 @@ import {
   type LogFn,
   type OutboxItem,
   type RateLimiter,
+  type RespondiBody,
+  type Tracking,
 } from "@rco/lead-core/server";
 import { isPageIdActive } from "@/content/lps";
 import { pageMeta, type PageId } from "@/content/pages";
 import { perfilEcom } from "@/content/options";
+import { SITES_CAPTURA } from "@/content/captura/sites";
 import { ecomLeadSchema, leadSchema } from "./lead-schema";
+import { respostasParaComercial } from "./captura/payload";
+import { perfilSites, type Perfil } from "./captura/perfil";
+import { criarSchemaEnvio, validarRespostas } from "./captura/validacao";
+
+const sitesEnvioSchema = criarSchemaEnvio("SITES");
 
 // ============================================================
 // POST /api/lead — a parte que roda no SERVIDOR da LP.
@@ -112,11 +121,10 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
   const ip = rateIp.check(clientIp(req));
   if (!ip.ok) return json(429, { ok: false, error: "rate_limited" }, { "retry-after": String(ip.retryAfterSec) });
 
-  // /lp-ecom tem formulário próprio (sem nicho, com investimento); as demais usam o padrão.
-  const isEcom = (data as { page?: unknown }).page === "ECOM";
-  const parsed = isEcom ? ecomLeadSchema.safeParse(data) : leadSchema.safeParse(data);
-  if (!parsed.success) return json(422, { ok: false, errors: fieldErrors(parsed.error) });
-  const lead = parsed.data;
+  // Três formatos de corpo: /sites (captura configurável, content/captura), /lp-ecom (5 perguntas) e o padrão (P04/P05).
+  const prep = prepareLead(data);
+  if (!prep.ok) return json(422, { ok: false, errors: prep.errors });
+  const lead = prep.lead;
 
   // LP desligada (ex. LP02_ATIVA=false): não aceita lead dela, nem por chamada direta à API.
   if (!(deps.isPageActive ?? isPageIdActive)(lead.page)) {
@@ -125,13 +133,15 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
   }
 
   const e164 = normalizeBrPhone(lead.whatsapp);
-  if (!e164) return json(422, { ok: false, errors: { whatsapp: "Informe um WhatsApp válido." } });
+  if (!e164) return json(422, { ok: false, errors: { [lead.whatsappField]: "Informe um WhatsApp válido." } });
 
   const phone = ratePhone.check(e164);
   if (!phone.ok) return json(429, { ok: false, error: "rate_limited" }, { "retry-after": String(phone.retryAfterSec) });
 
   const at = now();
   const page = lead.page as PageId;
+  // Só /sites devolve o perfil (para o evento final do dataLayer; nenhuma tela mostra). As outras LPs não mudam.
+  const extra = lead.perfil ? { perfil: lead.perfil } : {};
 
   // Mesma pessoa reenviando (recarregou a página, clicou de novo com outro id):
   // não cria segundo lead nem segundo negócio no CRM.
@@ -139,32 +149,11 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
   const recent = recentByPhone.get(recentKey);
   if (recent && at.getTime() - recent.at < RECENT_TTL_MS && outbox.statusOf(recent.id)) {
     log("lead.duplicate_recent", { id: recent.id, page, phone: phoneTail(e164) });
-    return json(200, { ok: true, id: recent.id, duplicate: true });
+    return json(200, { ok: true, id: recent.id, duplicate: true, ...extra });
   }
 
   const tracking = sanitizeTracking(lead.tracking);
-  const payload =
-    "investimento" in lead
-      ? buildEcomRespondiPayload({
-          page: pageMeta(page),
-          respondentId: lead.respondentId,
-          // Perfil calculado AQUI, nunca aceito do navegador.
-          lead: {
-            name: lead.name,
-            whatsappE164: e164,
-            email: lead.email,
-            faturamento: lead.faturamento,
-            investimento: lead.investimento,
-            perfil: perfilEcom(lead.faturamento),
-          },
-          tracking,
-        })
-      : buildRespondiPayload({
-          page: pageMeta(page),
-          respondentId: lead.respondentId,
-          lead: { name: lead.name, whatsappE164: e164, email: lead.email, nicho: lead.nicho, faturamento: lead.faturamento },
-          tracking,
-        });
+  const payload = lead.build({ e164, tracking });
 
   const item: OutboxItem = {
     id: lead.respondentId,
@@ -184,7 +173,7 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
     const { created } = outbox.enqueue(item);
     if (!created) {
       log("lead.duplicate_id", { id: item.id, page });
-      return json(200, { ok: true, id: item.id, duplicate: true });
+      return json(200, { ok: true, id: item.id, duplicate: true, ...extra });
     }
   } catch (err) {
     // Sem gravar, não há garantia nenhuma: melhor falhar e a pessoa tentar de novo
@@ -202,9 +191,108 @@ export async function handleLeadRequest(req: Request, deps: LeadServiceDeps): Pr
     id: item.id,
     page,
     phone: phoneTail(e164),
-    tracking: Object.keys(sanitizeTracking(lead.tracking)),
+    tracking: Object.keys(tracking),
+    ...extra,
   });
 
   schedule(() => deliverItem({ outbox, send, now, log }, item.id));
-  return json(200, { ok: true, id: item.id });
+  return json(200, { ok: true, id: item.id, ...extra });
+}
+
+/** Lead validado e pronto para virar item da fila, qualquer que seja o formato do corpo. */
+interface PreparedLead {
+  page: string;
+  respondentId: string;
+  whatsapp: string;
+  /** Campo que recebe o erro de WhatsApp inválido (no /sites as respostas usam o id da tela). */
+  whatsappField: string;
+  tracking: unknown;
+  perfil?: Perfil;
+  build: (args: { e164: string; tracking: Tracking }) => RespondiBody;
+}
+
+function prepareLead(data: unknown): { ok: true; lead: PreparedLead } | { ok: false; errors: Record<string, string> } {
+  const pageRaw = (data as { page?: unknown }).page;
+
+  if (pageRaw === "SITES") {
+    const parsed = sitesEnvioSchema.safeParse(data);
+    if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
+    const { respondentId, versao, respostas: bruto, tracking } = parsed.data;
+    const v = validarRespostas(SITES_CAPTURA, versao, bruto);
+    if (!v.ok) return { ok: false, errors: v.erros };
+    const respostas = v.respostas;
+    // Perfil calculado AQUI (bloco 8), nunca aceito do navegador.
+    const perfil = perfilSites({ faturamento: respostas.faturamento ?? "", anuncios: respostas.anuncios ?? "", prazo: respostas.prazo ?? "" });
+    return {
+      ok: true,
+      lead: {
+        page: "SITES",
+        respondentId,
+        whatsapp: respostas.whatsapp ?? "",
+        whatsappField: "whatsapp",
+        tracking,
+        perfil,
+        build: ({ e164, tracking: t }) =>
+          buildAnswersRespondiPayload({
+            page: pageMeta("SITES"),
+            respondentId,
+            answers: respostasParaComercial(SITES_CAPTURA, { pageId: "SITES", versao, respostas: { ...respostas, whatsapp: e164 }, perfil }),
+            tracking: t,
+          }),
+      },
+    };
+  }
+
+  // /lp-ecom tem formulário próprio (sem nicho, com investimento); as demais usam o padrão.
+  if (pageRaw === "ECOM") {
+    const parsed = ecomLeadSchema.safeParse(data);
+    if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
+    const lead = parsed.data;
+    return {
+      ok: true,
+      lead: {
+        page: lead.page,
+        respondentId: lead.respondentId,
+        whatsapp: lead.whatsapp,
+        whatsappField: "whatsapp",
+        tracking: lead.tracking,
+        build: ({ e164, tracking }) =>
+          buildEcomRespondiPayload({
+            page: pageMeta("ECOM"),
+            respondentId: lead.respondentId,
+            // Perfil calculado AQUI, nunca aceito do navegador.
+            lead: {
+              name: lead.name,
+              whatsappE164: e164,
+              email: lead.email,
+              faturamento: lead.faturamento,
+              investimento: lead.investimento,
+              perfil: perfilEcom(lead.faturamento),
+            },
+            tracking,
+          }),
+      },
+    };
+  }
+
+  const parsed = leadSchema.safeParse(data);
+  if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
+  const lead = parsed.data;
+  return {
+    ok: true,
+    lead: {
+      page: lead.page,
+      respondentId: lead.respondentId,
+      whatsapp: lead.whatsapp,
+      whatsappField: "whatsapp",
+      tracking: lead.tracking,
+      build: ({ e164, tracking }) =>
+        buildRespondiPayload({
+          page: pageMeta(lead.page as PageId),
+          respondentId: lead.respondentId,
+          lead: { name: lead.name, whatsappE164: e164, email: lead.email, nicho: lead.nicho, faturamento: lead.faturamento },
+          tracking,
+        }),
+    },
+  };
 }

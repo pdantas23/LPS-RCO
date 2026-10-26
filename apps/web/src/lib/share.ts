@@ -6,6 +6,7 @@ export const SITE_URL = "https://lp.rcohub.com.br";
 /** Imagens de compartilhamento 1200x630 em public/og (gere de novo com `node scripts/gen-og.mjs`). */
 export const OG_IMAGE_LP = "/og/lp.png";
 export const OG_IMAGE_ECOM = "/og/ecom.png";
+export const OG_IMAGE_SITES = "/og/sites.png";
 
 const ALT = "RCO Hub";
 

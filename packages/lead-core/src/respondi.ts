@@ -116,6 +116,35 @@ export function buildEcomRespondiPayload(input: BuildEcomPayloadInput): Respondi
   };
 }
 
+export interface BuildAnswersPayloadInput {
+  page: PageMeta;
+  respondentId: string;
+  /** Chave = rótulo do campo no COMERCIAL. Valor vazio é omitido (regra do webhook). A ordem é preservada. */
+  answers: Record<string, string>;
+  tracking: Tracking;
+}
+
+/**
+ * Payload genérico: as respostas já vêm com os rótulos do COMERCIAL (quem sabe o mapeamento é a configuração da
+ * captura no app, ex. /sites). Acrescenta só as chaves de campanha presentes. `WhatsApp` continua obrigatório no
+ * COMERCIAL: quem chama garante que está em `answers`.
+ */
+export function buildAnswersRespondiPayload(input: BuildAnswersPayloadInput): RespondiBody {
+  const { page, respondentId, tracking } = input;
+  const answers: Record<string, string> = {};
+  for (const [key, value] of Object.entries(input.answers)) {
+    if (typeof value === "string" && value.trim() !== "") answers[key] = value;
+  }
+  for (const key of TRACKING_KEYS) {
+    const value = tracking[key];
+    if (value) answers[key] = value;
+  }
+  return {
+    form: { form_id: page.formId, form_name: page.formName },
+    respondent: { respondent_id: respondentId, status: "completed", answers },
+  };
+}
+
 // ---------------- cliente HTTP ----------------
 
 export type CrmResult =

@@ -133,3 +133,18 @@ describe("postLeadToComercial", () => {
     expect(r.kind).toBe("retry");
   });
 });
+
+describe("buildAnswersRespondiPayload (respostas já com os rótulos do COMERCIAL)", () => {
+  it("preserva a ordem e os rótulos, omite vazio e acrescenta só a campanha presente", async () => {
+    const { buildAnswersRespondiPayload } = await import("./respondi");
+    const body = buildAnswersRespondiPayload({
+      page: { id: "SITES", formId: "lp-sites", formName: "LP Sites" },
+      respondentId: "5f0c2a4e-9d1b-4c53-8a77-2b6f0d1e9a10",
+      answers: { Nome: "Ana", WhatsApp: "5511999998888", Email: "", "Já tem site": "  ", Perfil: "B" },
+      tracking: { utm_source: "meta", gclid: "" , fbclid: "fb.1"},
+    });
+    expect(body.form).toEqual({ form_id: "lp-sites", form_name: "LP Sites" });
+    expect(body.respondent.respondent_id).toBe("5f0c2a4e-9d1b-4c53-8a77-2b6f0d1e9a10");
+    expect(Object.keys(body.respondent.answers)).toEqual(["Nome", "WhatsApp", "Perfil", "utm_source", "fbclid"]);
+  });
+});

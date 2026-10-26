@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { LP_ORIGENS, LP_ROUTES, isPageIdActive, lpOrigemOfPageId } from "./lps";
 import { ECOM_PAGE } from "./ecom";
 import { FORM_PAGE_IDS, PAGES } from "./pages";
-import { LP01_ATIVA, LP02_ATIVA, LP_ECOM_ATIVA } from "./site";
+import { LP01_ATIVA, LP02_ATIVA, LP_ECOM_ATIVA, SITES_ATIVA } from "./site";
 
 describe("rotas das LPs", () => {
   it("rotas pedidas: / = form, /lp01 = P05, /lp02 = P04, /lp-ecom reservada", () => {
@@ -11,11 +11,13 @@ describe("rotas das LPs", () => {
     expect(LP_ROUTES.lp02).toMatchObject({ path: "/lp02", pageId: "P04" });
     expect(LP_ROUTES["lp-ecom"]).toMatchObject({ path: "/lp-ecom", pageId: "ECOM" });
     expect(ECOM_PAGE).toMatchObject({ path: "/lp-ecom", id: "ECOM", formId: "lp-ecom" });
-    expect(LP_ORIGENS).toEqual(["form", "lp01", "lp02", "lp-ecom"]);
+    expect(LP_ROUTES.sites).toMatchObject({ path: "/sites", pageId: "SITES" });
+    expect(LP_ORIGENS).toEqual(["form", "lp01", "lp02", "lp-ecom", "sites"]);
   });
 
-  it("estado entregue: lp01 e lp-ecom no ar, lp02 desligada", () => {
-    expect([LP01_ATIVA, LP02_ATIVA, LP_ECOM_ATIVA]).toEqual([true, false, true]);
+  it("estado entregue: lp01, lp-ecom e sites no ar, lp02 desligada", () => {
+    expect([LP01_ATIVA, LP02_ATIVA, LP_ECOM_ATIVA, SITES_ATIVA]).toEqual([true, false, true, true]);
+    expect(isPageIdActive("SITES")).toBe(true);
     expect(isPageIdActive("P05")).toBe(true);
     expect(isPageIdActive("P04")).toBe(false);
     expect(isPageIdActive("ECOM")).toBe(true);
@@ -36,6 +38,7 @@ describe("rotas das LPs", () => {
     expect(lpOrigemOfPageId("P05")).toBe("lp01");
     expect(lpOrigemOfPageId("P04")).toBe("lp02");
     expect(lpOrigemOfPageId("ECOM")).toBe("lp-ecom");
+    expect(lpOrigemOfPageId("SITES")).toBe("sites");
     expect(lpOrigemOfPageId("other")).toBeUndefined();
   });
 });
