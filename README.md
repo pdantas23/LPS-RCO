@@ -8,6 +8,7 @@ Monorepo das landing pages da RCO Hub, servidas num **domínio único** por **um
 | `/lp01` | P05, Performance sem VSL (`apps/web`, Next) | no ar | origem **p05** (token `P05`) |
 | `/lp02` | P04, Performance com VSL (`apps/web`) | **desligada** (404), rota pronta | origem **p04** (token `P04`) |
 | `/lp-ecom` | LP de e-commerce (`apps/web`, sem vídeo, formulário próprio de 5 perguntas) | **pronta** (`LP_ECOM_ATIVA=true`); no ar depois do deploy | origem **lp-ecom** (token `ECOM`) |
+| `/sites` e `/sites/quiz` | LP de venda de sites (briefing do Luis v2.2): portfólio com filtro, quiz de uma pergunta por tela e card na LP | **pronta, copy e prints PROVISÓRIOS** (`SITES_ATIVA=true`); no ar depois do deploy | origem **sites** (token `SITES`, a criar no COMERCIAL: `docs/sites-comercial.md`) |
 
 A P01 (LP de venda do CRM RCO, do Aerton) saiu deste repositório em 06/10/2026: ela fica em outra rota/projeto, fora de lp.rcohub.com.br.
 
@@ -37,6 +38,14 @@ Dockerfile                imagem única (formulário + Next)
 - **`/lp-ecom` (ECOM):** mesmo caminho (`/api/lead`, fila, token `COMERCIAL_LEAD_TOKEN_ECOM`, `form_id` `lp-ecom`). Respostas enviadas, com estes rótulos exatos: `Nome`, `WhatsApp`, `Email`, `Faturamento`, `Investimento em anúncio`, `Perfil` ("Dentro" ou "Fora", calculado no servidor: faturamento "Até R$ 29.999" = Fora; "Prefiro conversar sobre isso" = Dentro, o lead é enviado normalmente) e as de campanha presentes (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `fbclid`, `wbraid`, `gbraid`). Não envia `Nicho` nem `Página de origem` (a origem é a integração). Texto e faixas: `content/ecom.ts` (copia literal em `docs/copy-ecom-v2.md`, conferida por teste); seção de provas escondida (`SHOW_PROOF_SECTION`); `PRIVACY_URL` e `CONTACT_URL` vazias (rodapé e consentimento só mostram link com URL real).
 - **`/` (P02):** o navegador chama direto o Supabase da RCO (`sb.rcoacademy.com.br`, RPC `capturar_lead_performance_rco`, chave ANÔNIMA). O próprio banco (migration `formulario/supabase/migrations/002`, pg_cron a cada minuto) reenvia ao webhook Respondi do COMERCIAL (`form_id` `lp-p02`); a URL do webhook, com o token, fica no Vault do banco. Esse caminho **não passa pelo servidor Next nem pelo outbox**. Qual "origem" o COMERCIAL grava para esse token depende de como a integração foi cadastrada lá (não está neste repositório: conferir no COMERCIAL).
 
+## /sites (LP de sites)
+
+- Briefing: `docs/briefings/lp-sites-v2.2.pdf`. Texto da página (PROVISÓRIO, a copy final é do Luis): `apps/web/src/content/sites.ts`. Portfólio (cases, etiquetas e prints PROVISÓRIOS, a confirmar com o Luis): `content/sites-portfolio.ts` e `public/sites/provisorio/`.
+- Perguntas, descrições e opções LITERAIS do briefing, num arquivo só e reaproveitável para outro produto: `content/captura/sites.ts` (estrutura em `content/captura/tipos.ts`). Nenhuma tela tem texto de pergunta.
+- Quiz em `/sites/quiz` (caminho curto de 9 telas ou longo de até 13, sorteado 50/50 e guardado no navegador) e card dentro da LP (só o curto). Quem cai em qual: `CAPTURA_FORMATO` em `content/sites.ts` (`quiz`, `card` ou `sorteio`; padrão `sorteio`, um terço para cada versão; decisão do Luis). Prévia: `/sites?captura=card`, `?captura=quiz_curto`, `?captura=quiz_longo` (fica guardada no navegador; não usar em anúncio).
+- Perfil A a D calculado só no servidor (`lib/captura/perfil.ts`), enviado ao COMERCIAL e devolvido apenas para o evento final do dataLayer.
+- Eventos: `docs/gtm-eventos.md`, seção /sites. Campos e o que criar no COMERCIAL: `docs/sites-comercial.md`.
+
 ## Flags (ligar e desligar rotas)
 
 Em `apps/web/src/content/site.ts` (constantes em código, de propósito: o EasyPanel repassa toda env como build-arg):
@@ -45,6 +54,7 @@ Em `apps/web/src/content/site.ts` (constantes em código, de propósito: o EasyP
 export const LP01_ATIVA = true;       // /lp01
 export const LP02_ATIVA = false;      // /lp02: para ligar, troque para true
 export const LP_ECOM_ATIVA = true;    // /lp-ecom: LP de e-commerce
+export const SITES_ATIVA = true;      // /sites e /sites/quiz: LP de sites
 ```
 
 Desligada = **404** (sem conteúdo, sem contar visita no dataLayer, e `POST /api/lead` recusa lead dessa página com 404 `page_inactive`). Escolhi 404 e não redirecionar para `/` para não mandar tráfego de anúncio para outro formulário sem ninguém ter decidido isso, e para a rota não aparecer no Google. Todas as páginas saem com `noindex` enquanto `ALLOW_INDEXING=false` (mesmo arquivo). Para ligar a `/lp02`: troque a flag, `npm test` (o teste `lps.test.ts` guarda o estado entregue e vai pedir a atualização), publique. `/p04` e `/p05` antigos foram removidos (nunca estiveram no ar).
@@ -73,6 +83,7 @@ Um serviço "App" por **Dockerfile** na raiz, contexto = raiz do repositório, p
 | Env de runtime | `COMERCIAL_BASE_URL` | `https://comercial.rcoacademy.com.br` |
 | Env de runtime | `COMERCIAL_LEAD_TOKEN_P05` | token da integração da LP05 (atenção: valor atual de produção ainda a decidir) |
 | Env de runtime | `COMERCIAL_LEAD_TOKEN_ECOM` | token da integração "lp-ecom" (sem ele, os leads da /lp-ecom ficam PENDENTES na fila e saem quando o token entrar) |
+| Env de runtime | `COMERCIAL_LEAD_TOKEN_SITES` | token da integração "lp-sites" (ainda não existe no COMERCIAL; sem ele os leads da /sites ficam PENDENTES na fila) |
 | Env de runtime | `COMERCIAL_LEAD_TOKEN_P04` | token da LP04 (pode ficar vazio enquanto a `/lp02` estiver desligada) |
 | Env de runtime (opcional) | `LEAD_OUTBOX_DIR` | já `/data/outbox` na imagem |
 | Env de runtime (opcional) | `LEAD_ALLOWED_ORIGINS`, `OUTBOX_SENT_RETENTION_DAYS` | ver `docs/fluxo-e-operacao.md` |

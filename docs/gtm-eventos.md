@@ -8,6 +8,7 @@ Domínio único **lp.rcohub.com.br**, um container GTM para todas as páginas e 
 | `/lp01` | `lp01` | `P05` | `apps/web` (Next) | no ar |
 | `/lp02` | `lp02` | `P04` | `apps/web` (Next) | **desligada** (`LP02_ATIVA=false`), 404 |
 | `/lp-ecom` | `lp-ecom` | `ECOM` | `apps/web` (Next), LP de e-commerce, sem vídeo | no ar quando publicada (`LP_ECOM_ATIVA=true`) |
+| `/sites` e `/sites/quiz` | `sites` | `SITES` | `apps/web` (Next), LP de sites + quiz | no ar quando publicada (`SITES_ATIVA=true`); eventos próprios na seção /sites abaixo |
 
 Mapa no código: `apps/web/src/content/lps.ts` (Next) e `formulario/src/lib/tracking.ts` (formulário). A P01 (LP de venda do CRM) não faz parte deste repositório.
 
@@ -62,6 +63,30 @@ Notas:
 | Página `/curioso`: `page_view` com `page_type: performance_form_curious` | Mantido + `lp_origem`, `page_id`, `page_path` |
 
 **Atenção para tags já existentes no container**: se houver tag/gatilho que lê `error_type` do formulário esperando o código cru, passe a ler `error_detail`.
+
+## /sites: eventos da captura (briefing do Luis v2.2, bloco 9)
+
+Código: `apps/web/src/lib/captura/eventos.ts` (catálogo fechado, testado em `captura.test.ts`). **Todo evento** da /sites leva `lp_origem: "sites"`, `page_id: "SITES"` e `versao_captura` (`quiz_curto`, `quiz_longo` ou `card`). O `page_view` genérico do layout não dispara nessas rotas: a própria página dispara o `page_view` já com a versão.
+
+| Evento | Quando | Parâmetros extras |
+|---|---|---|
+| `page_view` | entrada na LP ou no quiz | `page_path`, UTMs e click ids presentes |
+| `cta_click` | clique em "Quero meu site" | `cta_location` (`topo`, `como_funciona`, `captura`, `fixo`), `cta_text` |
+| `quiz_visto_<n>_<tela>` | tela do quiz mostrada (1x por tela por visita) | `tela_numero`, `tela_nome` |
+| `quiz_respondido_<n>_<tela>` | tela respondida (1x por tela por visita) | `tela_numero`, `tela_nome` |
+| `quiz_enviado` | envio do quiz confirmado pelo servidor | `perfil` (A a D, calculado no servidor), `event_id` |
+| `card_pagina_vista` | LP vista no formato card | |
+| `card_formulario_iniciado` | primeiro foco num campo do card | |
+| `card_formulario_enviado` | envio do card confirmado pelo servidor | `perfil`, `event_id` |
+| `generate_lead` | junto de `quiz_enviado`/`card_formulario_enviado` (mesma conversão das outras LPs) | `perfil`, `event_id`, `faturamento` |
+| `form_submit`, `form_error` | tentativa de envio do card; erro de envio (quiz e card) | `error_type`, `fields` |
+
+Telas e números (`<n>` é FIXO por posição; no longo, as três telas de ramo dividem o 5 e quem não tem ramo pula do 4 para o 6, para o funil comparar sempre a mesma tela):
+
+- **quiz_curto**: 1 `nome`, 2 `tipo`, 3 `necessidade`, 4 `desafio`, 5 `anuncio`, 6 `prazo`, 7 `faturamento`, 8 `whatsapp`, 9 `instagram`.
+- **quiz_longo**: 1 `nome`, 2 `tipo`, 3 `necessidade`, 4 `site`, 5 `oferta` | `produtos` | `momento`, 6 `desafio`, 7 `anuncio`, 8 `prazo`, 9 `faturamento`, 10 `funcionarios`, 11 `whatsapp`, 12 `email`, 13 `instagram`.
+
+Os nomes dos eventos do card (`card_pagina_vista`, `card_formulario_iniciado`, `card_formulario_enviado`) são proposta: o briefing descreve os três momentos sem dar o nome. Para o GTM: um gatilho "Evento personalizado" com regex `^quiz_(visto|respondido)_` cobre todas as telas; variáveis novas: `versao_captura`, `tela_numero`, `tela_nome`, `perfil`.
 
 ## Variáveis de dataLayer a criar no GTM (tipo "Variável da camada de dados", versão 2)
 
