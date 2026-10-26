@@ -342,3 +342,34 @@ describe("eventos do dataLayer", () => {
     expect(dataLayer).toEqual([{ event: "form_error", lp_origem: "sites", page_id: "SITES", versao_captura: "card", error_type: "validation", fields: "whatsapp" }]);
   });
 });
+
+// ---------------------------------------------------------------- galeria (bloco 2 + ajustes do Philip, 26/10)
+describe("galeria do portfólio", () => {
+  it("todo case tem descrição curta (sem travessão) e é provisório; selo desligado e sem etiqueta no cartão", async () => {
+    const { PORTFOLIO_CASES, filtrosVisiveis } = await import("@/content/sites-portfolio");
+    const { MOSTRAR_SELO_PROVISORIO } = await import("@/content/sites");
+    expect(MOSTRAR_SELO_PROVISORIO).toBe(false);
+    for (const c of PORTFOLIO_CASES) {
+      expect(c.descricao.length, c.id).toBeGreaterThan(10);
+      expect(c.descricao.length, c.id).toBeLessThanOrEqual(70);
+      expect(c.descricao, c.id).not.toMatch(/[—–]/);
+      expect(c.descricao, c.id).not.toMatch(/incr[ií]vel|exclusiv|premium|transform|revolucion|inesquec/i);
+      expect(c.provisorio).toBe(true);
+    }
+    // filtros continuam vindo dos tipos; Clínicas sem case não aparece
+    expect(filtrosVisiveis()).toEqual(["Institucional", "Captura de leads", "Lançamento", "Loja virtual", "Advocacia"]);
+    const g = fs.readFileSync(path.resolve(__dirname, "../../components/sites/Galeria.tsx"), "utf8");
+    expect(g).not.toContain("c.etiquetas.map");
+    expect(g).toContain("c.descricao");
+    // troca animada: layoutId do filtro, AnimatePresence, reduced-motion e altura reservada
+    for (const t of ["layoutId", "AnimatePresence", "useReducedMotion", "minHeight"]) expect(g).toContain(t);
+  });
+
+  it("Âncora Prime mostra o site de consórcio, não a página de links da bio", async () => {
+    const { PORTFOLIO_CASES } = await import("@/content/sites-portfolio");
+    const a = PORTFOLIO_CASES.find((c) => c.id === "ancora")!;
+    expect(a.celular.height).toBeGreaterThan(1000); // a página de links tinha 649 px
+    const cfgSrc = fs.readFileSync(path.resolve(__dirname, "../../content/sites-portfolio.ts"), "utf8");
+    expect(cfgSrc).toContain("ancoraprime.com/consorcios");
+  });
+});

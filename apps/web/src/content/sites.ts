@@ -48,15 +48,20 @@ export const CAPTURA_FORMATO: CapturaFormato = "sorteio";
  */
 export const VAGAS_FRASE = "";
 
-/** Selo "print provisório" nos cartões do portfólio enquanto os prints e a lista não forem os do Luis. */
-export const MOSTRAR_SELO_PROVISORIO = true;
+/**
+ * Selo "print provisório" nos cartões do portfólio. DESLIGADO a pedido do Philip (26/10/2026): a marcação de
+ * provisório fica só na configuração (content/sites-portfolio.ts, campo `provisorio`).
+ */
+export const MOSTRAR_SELO_PROVISORIO = false;
 
 export const SITES_ANCORAS = { portfolio: "portfolio", comoFunciona: "como-funciona", captura: "captura" } as const;
 
 // ---------- Textos (PROVISÓRIOS) ----------
 
 export const SITES_HERO = {
-  eyebrow: "Sites com código próprio",
+  // Opções consideradas (decisão do Philip): "Seu site entregando cliente no WhatsApp" (escolhida),
+  // "Pague uma vez, sem mensalidade de plataforma", "Site do seu jeito, pago uma vez só".
+  eyebrow: "Seu site entregando cliente no WhatsApp",
   title: "Cliente que pede o seu site e não recebe um link vai comprar de quem tem.",
   subtitle:
     "Instagram e WhatsApp não bastam quando o cliente quer comparar. A RCO constrói o site da sua empresa com código próprio, você paga uma vez só e recebe tudo funcionando, com o contato do cliente chegando no seu WhatsApp.",
